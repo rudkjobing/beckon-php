@@ -48,7 +48,22 @@ class Friend{
 			$friends = $this->model->friendAdd($decodebody->email, $decodebody->auth_key, $decodebody->device_key, $decodebody->friend_email);
 			$this->success = "1";
 			$this->message = "Friend added";
-			$this->payload = $friends;
+			$this->payload = "";
+		}
+		catch(Exception $e){
+			$this->success = "0";
+			$this->message = $e->getMessage();
+		}
+		$response = array("success" => $this->success, "message" => $this->message, "payload" => $this->payload);
+	    return $response;
+	}
+	
+	function remove($decodebody){
+		try{
+			$friends = $this->model->friendRemove($decodebody->email, $decodebody->auth_key, $decodebody->device_key, $decodebody->friend_email);
+			$this->success = "1";
+			$this->message = "Friend removed";
+			$this->payload = "";
 		}
 		catch(Exception $e){
 			$this->success = "0";

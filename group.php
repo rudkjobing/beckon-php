@@ -18,7 +18,22 @@ class Group{
 			$group = $this->model->groupAdd($decodebody->email, $decodebody->auth_key, $decodebody->device_key, $decodebody->group_name);
 			$this->success = "1";
 			$this->message = "Group added";
-			$this->payload = $group;
+			$this->payload = "";
+		}
+		catch(Exception $e){
+			$this->success = "0";
+			$this->message = $e->getMessage();
+		}
+		$response = array("success" => $this->success, "message" => $this->message, "payload" => $this->payload);
+   		return $response;	
+	}
+	
+	public function remove($decodebody){
+		try{
+			$group = $this->model->groupRemove($decodebody->email, $decodebody->auth_key, $decodebody->device_key, $decodebody->group_name);
+			$this->success = "1";
+			$this->message = "Group removed";
+			$this->payload = "";
 		}
 		catch(Exception $e){
 			$this->success = "0";
@@ -75,7 +90,7 @@ class Group{
 
 	public function removeMember($decodebody){
 		try{
-			$this->model->removeFriendFromGroup($decodebody->email, $decodebody->auth_key, $decodebody->device_key, $decodebody->group_name,$decodebody->friend_email);
+			$this->model->groupRemoveMember($decodebody->email, $decodebody->auth_key, $decodebody->device_key, $decodebody->group_name,$decodebody->friend_email);
 			$this->success = "1";
 			$this->message = "Friend removed from group";
 			$this->payload = null;

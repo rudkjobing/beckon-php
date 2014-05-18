@@ -32,12 +32,18 @@
 		}
 		elseif($_SERVER['HTTP_FRIEND'] == "accept"){
 			$response = $friend->accept($decodebody);
-		}	
+		}
+		elseif($_SERVER['HTTP_FRIEND'] == "remove"){
+			$response = $friend->remove($decodebody);
+		}
 	}
 	elseif(isset($_SERVER['HTTP_GROUP'])){
 		$group = New Group();
 		if($_SERVER['HTTP_GROUP'] == "add"){
 			$response = $group->add($decodebody);
+		}
+		if($_SERVER['HTTP_GROUP'] == "remove"){
+			$response = $group->remove($decodebody);
 		}
 		elseif($_SERVER['HTTP_GROUP'] == "getAll"){
 			$response = $group->get($decodebody);

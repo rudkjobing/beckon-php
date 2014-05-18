@@ -255,7 +255,20 @@
 			catch(Exception $e){
 				throw $e;
 			}
-			
+		}
+		
+		function friendRemove($email, $authkey, $device_key, $friend_email){
+			try{
+				$id = $this->userAuthenticate($email, $authkey, $device_key);
+				$q = mysqli_query($this->connection, "select id from beckon_user where email = '{$friend_email}'");
+				$r = mysqli_fetch_assoc($q);
+				$friend_id = $r['id'];
+				$q = mysqli_query($this->connection, "delete from beckon_friend where invitee = {$id} and inviter = {$friend_id}");
+				$q = mysqli_query($this->connection, "delete from beckon_friend where invitee = {$friend_id} and inviter = {$id}");
+			}
+			catch(Exception $e){
+				throw $e;
+			}
 		}
 		
 		function groupAdd($email, $authkey, $device_key, $group_name){
@@ -267,6 +280,23 @@
 				}
 				else{
 					$q = mysqli_query($this->connection, "insert into beckon_group (owner, name) values ({$id}, '{$group_name}')");
+				}
+			}
+			catch(Exception $e){
+				throw $e;
+			}
+		}
+		
+		function groupRemove($email, $authkey, $device_key, $group_name){
+			try{
+				$id = $this->userAuthenticate($email, $authkey, $device_key);
+				$q = mysqli_query($this->connection, "select id from beckon_group where beckon_group.owner = '{$id}' and beckon_group.name = '{$group_name}'");
+				if(mysqli_num_rows($q) > 0){
+					$r = mysqli_fetch_assoc($q);
+					$q = mysqli_query($this->connection, "delete from beckon_group where beckon_group.id = {$r['id']}");
+				}
+				else{
+					throw new Exception("Group does not exist");
 				}
 			}
 			catch(Exception $e){
@@ -345,7 +375,7 @@
 			}
 		}
 		
-		function groupRemoveFriend($email, $authkey, $device_key, $group_name, $friend_email){
+		function groupRemoveMember($email, $authkey, $device_key, $group_name, $friend_email){
 			try{
 				$id = $this->userAuthenticate($email, $authkey, $device_key);
 				$q = mysqli_query($this->connection, "select beckon_group_member.id from beckon_group_member inner join beckon_group on beckon_group_member.group_id = beckon_group.id inner join beckon_friend on beckon_group_member.member = beckon_friend.id inner join beckon_user on beckon_friend.invitee = beckon_user.id where owner = {$id} and beckon_group.name = '{$group_name}' and beckon_user.email = '{$friend_email}'");
