@@ -1,12 +1,12 @@
 <?php
-require_once "model.php";	
+require_once "users.class.php";	
 class User{
 	private $model;
 	private $success;
 	private $message;
 	private $payload;
 	function __construct() {
-		$this->model = New Model();
+		$this->model = New Users();
 		$this->success = "0";
 		$this->message = "Operation failed";
 		$this->payload = "";
@@ -14,7 +14,7 @@ class User{
 	
 	function add($decodebody){
 		try{
-			$user = $this->model->userAdd($decodebody->email, $decodebody->firstname, $decodebody->lastname, $decodebody->phonenumber, $decodebody->countrycode, $decodebody->password);
+			$user = $this->model->put($decodebody->email, $decodebody->firstname, $decodebody->lastname, $decodebody->phonenumber, $decodebody->countrycode, $decodebody->password);
 			$this->success = "1";
 			$this->message = "User has been created";
 		}
@@ -28,7 +28,7 @@ class User{
 	
 	function authenticate($decodebody){
 		try{
-			$user = $this->model->userGet($decodebody->email, $decodebody->password, $decodebody->device_key);
+			$user = $this->model->get($decodebody->email, $decodebody->password, $decodebody->device_key);
 			$this->success = "1";
 			$this->message = "User is authentic";
 			$this->payload = $user;
@@ -43,7 +43,7 @@ class User{
 	
 	function delete($decodebody){
 		try{
-			$user = $this->model->userDelete($decodebody->email, $decodebody->auth_key, $decodebody->device_key, $decodebody->password);
+			$user = $this->model->delete($decodebody->email, $decodebody->auth_key, $decodebody->device_key, $decodebody->password);
 			$this->success = "1";
 			$this->message = "User has been deleted";
 			$this->payload = $user;
@@ -73,7 +73,7 @@ class User{
 	
 	function ping($decodebody){
 		try{
-			$user = $this->model->userPing($decodebody->email, $decodebody->auth_key, $decodebody->device_key);
+			$user = $this->model->ping($decodebody->email, $decodebody->auth_key, $decodebody->device_key);
 			$this->success = "1";
 			$this->message = "User is valid and is welcome to use the server";
 			$this->payload = $user;

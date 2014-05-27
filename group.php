@@ -1,5 +1,5 @@
 <?PHP
-require_once "model.php";	
+require_once "groups.class.php";	
 class Group{
 	private $model;
 	private	$success;
@@ -7,15 +7,15 @@ class Group{
 	private $payload;
 
 	function __construct() {
-		$this->model = New Model();
+		$this->model = New Groups();
 		$this->success = "0";
 		$this->message = "Operation failed";
 		$this->payload = "";
 	}
 
-	public function add($decodebody){
+	function add($decodebody){
 		try{
-			$group = $this->model->groupAdd($decodebody->email, $decodebody->auth_key, $decodebody->device_key, $decodebody->group_name);
+			$group = $this->model->put($decodebody->email, $decodebody->auth_key, $decodebody->device_key, $decodebody->group_name);
 			$this->success = "1";
 			$this->message = "Group added";
 			$this->payload = "";
@@ -28,9 +28,9 @@ class Group{
    		return $response;	
 	}
 	
-	public function remove($decodebody){
+	function remove($decodebody){
 		try{
-			$group = $this->model->groupRemove($decodebody->email, $decodebody->auth_key, $decodebody->device_key, $decodebody->group_name);
+			$group = $this->model->delete($decodebody->email, $decodebody->auth_key, $decodebody->device_key, $decodebody->group_name);
 			$this->success = "1";
 			$this->message = "Group removed";
 			$this->payload = "";
@@ -43,9 +43,9 @@ class Group{
    		return $response;	
 	}
 
-	public function get($decodebody){
+	function get($decodebody){
 		try{
-			$groups = $this->model->groupGet($decodebody->email, $decodebody->auth_key, $decodebody->device_key);
+			$groups = $this->model->get($decodebody->email, $decodebody->auth_key, $decodebody->device_key);
 			$this->success = "1";
 			$this->message = "Groups fetched";
 			$this->payload = $groups;
@@ -58,9 +58,9 @@ class Group{
    		return $response;
 	}
 
-	public function getMembers($decodebody){
+	function getMembers($decodebody){
 		try{
-			$members = $this->model->groupGetMembers($decodebody->email, $decodebody->auth_key, $decodebody->device_key, $decodebody->group_name);
+			$members = $this->model->getMembers($decodebody->email, $decodebody->auth_key, $decodebody->device_key, $decodebody->group_name);
 			$this->success = "1";
 			$this->message = "Members fetched";
 			$this->payload = $members;
@@ -73,9 +73,9 @@ class Group{
    		return $response;
 	}
 
-	public function addMember($decodebody){
+	function addMember($decodebody){
 		try{
-			$this->model->groupAddFriend($decodebody->email, $decodebody->auth_key, $decodebody->device_key, $decodebody->group_name,$decodebody->friend_email);
+			$this->model->addMember($decodebody->email, $decodebody->auth_key, $decodebody->device_key, $decodebody->group_name,$decodebody->friend_email);
 			$this->success = "1";
 			$this->message = "Friend added to group";
 			$this->payload = null;
@@ -88,9 +88,9 @@ class Group{
    		return $response;
 	}
 
-	public function removeMember($decodebody){
+	function removeMember($decodebody){
 		try{
-			$this->model->groupRemoveMember($decodebody->email, $decodebody->auth_key, $decodebody->device_key, $decodebody->group_name,$decodebody->friend_email);
+			$this->model->removeMember($decodebody->email, $decodebody->auth_key, $decodebody->device_key, $decodebody->group_name,$decodebody->friend_email);
 			$this->success = "1";
 			$this->message = "Friend removed from group";
 			$this->payload = null;
