@@ -2,9 +2,10 @@
 	require_once "user.php";
 	require_once "friend.php";
 	require_once "group.php";
+	require_once "beckon.php";
 	if(!isset($_SERVER['HTTP_APPKEY']) || $_SERVER['HTTP_APPKEY'] != "opfusk"){
-		header("HTTP/1.0 404 Not Found");
-		exit;
+		//header("HTTP/1.0 404 Not Found");
+		//exit;
 	}
 	
 	$response = json_decode('{"success" : "0" , "message" : "fatal error" , "payload" : ""}');
@@ -22,6 +23,15 @@
 			$response = $user->authenticate($decodebody);
 		}
 	}
+	elseif(isset($_SERVER['HTTP_BECKON'])){
+		$beckon = New Beckon();
+		if($_SERVER['HTTP_BECKON'] == "add"){
+			$response = $beckon->add($decodebody);
+		}
+		elseif($_SERVER['HTTP_BECKON'] == "getAll"){
+			$response = $beckon->getAll($decodebody);
+		}
+	}
 	elseif(isset($_SERVER['HTTP_FRIEND'])){
 		$friend = New Friend();
 		if($_SERVER['HTTP_FRIEND'] == "add"){
@@ -29,6 +39,9 @@
 		}
 		elseif($_SERVER['HTTP_FRIEND'] == "getAll"){
 			$response = $friend->getAll($decodebody);
+		}
+		elseif($_SERVER['HTTP_FRIEND'] == "getPending"){
+			$response = $friend->getPending($decodebody);
 		}
 		elseif($_SERVER['HTTP_FRIEND'] == "accept"){
 			$response = $friend->accept($decodebody);
