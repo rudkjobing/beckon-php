@@ -35,5 +35,23 @@ class Beckon{
 	    return $response;
 	}
 
+	function getAll($decodebody){
+		try{
+			$beckons = $this->model->getAll(	$decodebody->email, 
+												$decodebody->auth_key, 
+												$decodebody->device_key);
+			$this->success = "1";
+			$this->message = "Beckons fetched";
+			$this->payload = $beckons;
+		}
+		catch(Exception $e){
+			$this->success = "0";
+			$this->message = $e->getMessage();
+		}
+		$response = array("success" => $this->success, "message" => $this->message, "payload" => $this->payload);
+	    return $response;
+	}
+
+
 }	
 ?>
