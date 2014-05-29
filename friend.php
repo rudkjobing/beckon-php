@@ -30,7 +30,7 @@ class Friend{
 	
 	function getPending($decodebody){
 		try{
-			$friends = $this->model->getPending($decodebody->email, $decodebody->auth_key, $decodebody->device_key);
+			$friends = $this->model->getRequests($decodebody->email, $decodebody->auth_key, $decodebody->device_key);
 			$this->success = "1";
 			$this->message = "Pending friend requests fetched";
 			$this->payload = $friends;

@@ -12,7 +12,7 @@ class User{
 		$this->payload = "";
 	}
 	
-	function add($decodebody){
+	function put($decodebody){
 		try{
 			$user = $this->model->put($decodebody->email, $decodebody->firstname, $decodebody->lastname, $decodebody->phonenumber, $decodebody->countrycode, $decodebody->password);
 			$this->success = "1";
@@ -26,12 +26,27 @@ class User{
 	    return $response;
 	}
 	
-	function authenticate($decodebody){
+	function testCredentials($decodebody){
 		try{
-			$user = $this->model->get($decodebody->email, $decodebody->password, $decodebody->device_key);
+			$this->model->ping($decodebody->email, $decodebody->auth_key, $decodebody->device_key);
 			$this->success = "1";
 			$this->message = "User is authentic";
-			$this->payload = $user;
+			$this->payload = "";
+		}
+		catch(Exception $e){
+			$this->success = "0";
+			$this->message = $e->getMessage();
+		}
+		$response = array("success" => $this->success, "message" => $this->message, "payload" => $this->payload);
+	    return $response;	
+	}
+	
+	function updateNotificationKey($decodebody){
+		try{
+			$this->model->updateNotificationKey($decodebody->email, $decodebody->auth_key, $decodebody->device_key, $decodybody->notification_key);
+			$this->success = "1";
+			$this->message = "Notification key updated";
+			$this->payload = "";
 		}
 		catch(Exception $e){
 			$this->success = "0";

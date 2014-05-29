@@ -10,7 +10,7 @@ class Beckons extends Model{
 	function getAll($email, $authkey, $device_key){
 		try{
 			$id = $this->userAuthenticate($email, $authkey, $device_key);
-			$q = mysqli_query($this->connection, "select beckon_beckon.id, beckon_beckon.title from beckon_beckon inner join beckon_beckon_invitation on beckon_beckon.id = beckon_beckon_invitation.beckon_id inner join beckon_user on beckon_beckon_invitation.invitee = beckon_user.id where beckon_user.id = '$id'");
+			$q = mysqli_query($this->connection, "select beckon_beckon.id, beckon_beckon.title from beckon_beckon inner join beckon_beckon_invitation on beckon_beckon.id = beckon_beckon_invitation.beckon_id inner join beckon_friend on beckon_beckon_invitation.invitee = beckon_friend.id inner join beckon_user on beckon_friend.invitee = beckon_user.id where beckon_user.id = '$id'");
 			if(mysqli_error($this->connection)){
 				throw new Exception(mysqli_error($this->connection));
 			}

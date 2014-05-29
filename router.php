@@ -3,9 +3,9 @@
 	require_once "friend.php";
 	require_once "group.php";
 	require_once "beckon.php";
-	if(!isset($_SERVER['HTTP_APPKEY']) || $_SERVER['HTTP_APPKEY'] != "opfusk"){
-		//header("HTTP/1.0 404 Not Found");
-		//exit;
+	if(!isset($_SERVER['HTTP_APPKEY']) || $_SERVER['HTTP_APPKEY'] != "6752dad744e6ab1bd0e65dbf4f2ffc77"){
+		header("HTTP/1.0 404 Not Found");
+		exit;
 	}
 	
 	$response = json_decode('{"success" : "0" , "message" : "fatal error" , "payload" : ""}');
@@ -13,14 +13,17 @@
 	$decodebody = json_decode($body);
 	if(isset($_SERVER['HTTP_USER'])){
 		$user = New User();
-		if($_SERVER['HTTP_USER'] == "add"){
-			$response = $user->add($decodebody);
+		if($_SERVER['HTTP_USER'] == "testCredentials"){
+			$response = $user->testCredentials($decodebody);
+		}
+		elseif($_SERVER['HTTP_USER'] == "put"){
+			$response = $user->put($decodebody);
 		}
 		elseif($_SERVER['HTTP_USER'] == "registerDevice"){
 			$response = $user->registerDevice($decodebody);
 		}
-		elseif($_SERVER['HTTP_USER'] == "authenticate"){
-			$response = $user->authenticate($decodebody);
+		elseif($_SERVER['HTTP_USER'] == "updateNotificationKey"){
+			$response = $user->updateNotificationKey($decodebody);
 		}
 	}
 	elseif(isset($_SERVER['HTTP_BECKON'])){
