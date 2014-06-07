@@ -7,9 +7,9 @@ class Beckons extends Model{
 		parent::__construct();
 	}
 
-	function getAll($email, $authkey, $device_key){
+	function getAll($id, $authkey, $device_key){
 		try{
-			$id = $this->userAuthenticate($email, $authkey, $device_key);
+			$this->userAuthenticate($id, $authkey, $device_key);
 			$q = mysqli_query($this->connection, "select beckon_beckon.id, beckon_beckon.title from beckon_beckon inner join beckon_beckon_invitation on beckon_beckon.id = beckon_beckon_invitation.beckon_id inner join beckon_friend on beckon_beckon_invitation.invitee = beckon_friend.id inner join beckon_user on beckon_friend.invitee = beckon_user.id where beckon_user.id = '$id'");
 			if(mysqli_error($this->connection)){
 				throw new Exception(mysqli_error($this->connection));
@@ -41,9 +41,9 @@ class Beckons extends Model{
 		}
 	}
 			
-	function put($email, $authkey, $device_key, $friend_ids, $group_ids, $title, $description, $duedate){
+	function put($id, $authkey, $device_key, $friend_ids, $group_ids, $title, $description, $duedate){
 		try{
-			$id = $this->userAuthenticate($email, $authkey, $device_key);
+			$this->userAuthenticate($id, $authkey, $device_key);
 			$q = mysqli_query($this->connection, "insert into beckon_beckon (owner, title, description, duedate) values ({$id}, '{$title}', '{$description}', '{$duedate}')");
 			if(mysqli_error($this->connection)){
 				throw new Exception(mysqli_error($this->connection));
@@ -62,6 +62,10 @@ class Beckons extends Model{
 				$q = mysqli_query($this->connection, "insert into beckon_beckon_invitation (beckon_id, invitee) values ({$beckon_id}, {$friend})");
 			}
 			mysqli_query($this->connection, "COMMIT");
+			//Get all devices for notification
+			/*$friendString = $this->buildIntInString($friends);
+			$q = mysqli_query($this->connection, "select id from beckon_device inner join beckon_user on beckon_device.user_id = beckon_user.id inner join beckon_friend on beckon_user.id = beckon_friend.invitee where beckon_friend.id in {$friendString}");*/
+			
 		}
 		catch(Exception $e){
 			throw $e;

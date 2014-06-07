@@ -15,7 +15,7 @@ class Friend{
 	
 	function getAll($decodebody){
 		try{
-			$friends = $this->model->getAll($decodebody->email, $decodebody->auth_key, $decodebody->device_key);
+			$friends = $this->model->getAll($decodebody->id, $decodebody->auth_key, $decodebody->device_key);
 			$this->success = "1";
 			$this->message = "Friends fetched";
 			$this->payload = $friends;
@@ -30,7 +30,7 @@ class Friend{
 	
 	function getPending($decodebody){
 		try{
-			$friends = $this->model->getRequests($decodebody->email, $decodebody->auth_key, $decodebody->device_key);
+			$friends = $this->model->getRequests($decodebody->id, $decodebody->auth_key, $decodebody->device_key);
 			$this->success = "1";
 			$this->message = "Pending friend requests fetched";
 			$this->payload = $friends;
@@ -45,7 +45,7 @@ class Friend{
 	
 	function add($decodebody){
 		try{
-			$friends = $this->model->put($decodebody->email, $decodebody->auth_key, $decodebody->device_key, $decodebody->friend_email);
+			$friends = $this->model->put($decodebody->id, $decodebody->auth_key, $decodebody->device_key, $decodebody->friend_email);
 			$this->success = "1";
 			$this->message = "Friend added";
 			$this->payload = "";
@@ -60,7 +60,7 @@ class Friend{
 	
 	function remove($decodebody){
 		try{
-			$friends = $this->model->delete($decodebody->email, $decodebody->auth_key, $decodebody->device_key, $decodebody->friend_email);
+			$friends = $this->model->delete($decodebody->id, $decodebody->auth_key, $decodebody->device_key, $decodebody->friend_email);
 			$this->success = "1";
 			$this->message = "Friend removed";
 			$this->payload = "";
@@ -75,7 +75,7 @@ class Friend{
 
 	function accept($decodebody){
 		try{
-			$friends = $this->model->acceptRequest($decodebody->email, $decodebody->auth_key, $decodebody->device_key, $decodebody->friend_email);
+			$friends = $this->model->acceptRequest($decodebody->id, $decodebody->auth_key, $decodebody->device_key, $decodebody->friend_email);
 			$this->success = "1";
 			$this->message = "Friend accepted";
 			$this->payload = "";

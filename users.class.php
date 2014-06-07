@@ -24,7 +24,7 @@ class Users extends Model{
 				else{
 					throw new Exception("Device not recognized, please register device");
 				}
-				return array("email" => $r['email'], "auth_key" => $authkey, "firstname" => $r['firstname'], "lastname" => $r['lastname'], "phonenumber" => $r['phonenumber'], "countrycode" => $r['countrycode']);
+				return array("id" => $r['id'], "email" => $r['email'], "auth_key" => $authkey, "firstname" => $r['firstname'], "lastname" => $r['lastname'], "phonenumber" => $r['phonenumber'], "countrycode" => $r['countrycode']);
 			}
 			else{
 				throw new Exception("Invalid credentials");
@@ -63,7 +63,7 @@ class Users extends Model{
 				$headers .= "From: 'Welcome to Beckon' <auth@beckon.dk>\r\n";
 				$headers .= "Reply-To: slyngel@gmail.com\r\n";
 				$headers .= "X-Mailer: PHP/" . phpversion();
-				mail($email, "Confirm your email", "Hello ".$firstname."!<br><br>To begin using Beckon, please confirm your email address by following this </br><a href='http://gateway.beckon.dk/confirm.php?k=".$k."'>link</a>"  , $headers);
+				mail($email, "Confirm your email", "Hello ".$firstname."!<br><br>To begin using Beckon, please confirm your email address by following this </br><a href='https://gateway.beckon.dk/confirm.php?k=".$k."'>link</a>"  , $headers);
 				$q = mysqli_query($this->connection, "insert into beckon_user (email, firstname, lastname, phonenumber, countrycode, hash, confirmation_key) values ('{$email}', '{$firstname}', '{$lastname}', '{$phonenumber}', '{$countrycode}', '{$hash}', '{$k}')");
 				return;
 			}
@@ -75,9 +75,9 @@ class Users extends Model{
 
 	
 
-	function delete($email, $authkey, $device_key, $password){
+	function delete($id, $authkey, $device_key, $password){
 		try{
-			$id = $this->userAuthenticate($email, $authkey, $device_key);
+			$this->userAuthenticate($id, $authkey, $device_key);
 			$user = $this->userGet($email, $password, $device_key);
 			$q = mysqli_query($this->connection, "delete from beckon_user where id = {$id}");			
 		}
@@ -86,18 +86,18 @@ class Users extends Model{
 		}
 	}
 	
-	function userRegisterDevice($email, $password, $device_type, $device_os){
+	function userRegisterDevice($email, $password, $device_type, $device_os, $notification_group){
 		$s = strtoupper(md5(uniqid(rand(),true)));
 		$device_key = substr($s,0,8) . '-' . substr($s,8,4) . '-' . substr($s,12,4). '-' . substr($s,16,4). '-' . substr($s,20);
-		mysqli_query($this->connection, "insert into beckon_device (user_id, device_key, device_type, device_os) values ((select id from beckon_user where email = '{$email}' limit 1), '{$device_key}', '{$device_type}', '{$device_os}')");
+		mysqli_query($this->connection, "insert into beckon_device (user_id, device_key, device_type, device_os, notification_group) values ((select id from beckon_user where email = '{$email}' limit 1), '{$device_key}', '{$device_type}', '{$device_os}', '{$notification_group}')");
 		mysqli_query($this->connection, "commit");
 		$user = $this->get($email, $password, $device_key);
 		$user['device_key'] = $device_key;
 		return $user;		
 	}
 	
-	function updateNotificationKey($email, $authkey, $device_key, $notification_key){
-		$id = $this->userAuthenticate($email, $authkey, $device_key);
+	function updateNotificationKey($id, $authkey, $device_key, $notification_key){
+		$this->userAuthenticate($id, $authkey, $device_key);
 		$q = mysqli_query($this->connection, "update beckon_device set notification_key = '{$notification_key}' where user_id = {$id} and device_key = '{$device_key}'");
 		return;
 	}

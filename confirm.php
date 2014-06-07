@@ -1,6 +1,6 @@
 <?PHP
 
-require_once "model.php";
+require_once "model.class.php";
 
 if(isset($_GET['k'])){
 	$model = new Model();

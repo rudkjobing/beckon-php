@@ -28,7 +28,7 @@ class User{
 	
 	function testCredentials($decodebody){
 		try{
-			$this->model->ping($decodebody->email, $decodebody->auth_key, $decodebody->device_key);
+			$this->model->ping($decodebody->id, $decodebody->auth_key, $decodebody->device_key);
 			$this->success = "1";
 			$this->message = "User is authentic";
 			$this->payload = "";
@@ -43,7 +43,7 @@ class User{
 	
 	function updateNotificationKey($decodebody){
 		try{
-			$this->model->updateNotificationKey($decodebody->email, $decodebody->auth_key, $decodebody->device_key, $decodybody->notification_key);
+			$this->model->updateNotificationKey($decodebody->id, $decodebody->auth_key, $decodebody->device_key, $decodebody->notification_key);
 			$this->success = "1";
 			$this->message = "Notification key updated";
 			$this->payload = "";
@@ -58,7 +58,7 @@ class User{
 	
 	function delete($decodebody){
 		try{
-			$user = $this->model->delete($decodebody->email, $decodebody->auth_key, $decodebody->device_key, $decodebody->password);
+			$user = $this->model->delete($decodebody->id, $decodebody->auth_key, $decodebody->device_key, $decodebody->password);
 			$this->success = "1";
 			$this->message = "User has been deleted";
 			$this->payload = $user;
@@ -88,7 +88,7 @@ class User{
 	
 	function ping($decodebody){
 		try{
-			$user = $this->model->ping($decodebody->email, $decodebody->auth_key, $decodebody->device_key);
+			$user = $this->model->ping($decodebody->id, $decodebody->auth_key, $decodebody->device_key);
 			$this->success = "1";
 			$this->message = "User is valid and is welcome to use the server";
 			$this->payload = $user;
@@ -103,7 +103,7 @@ class User{
 	
 	function registerDevice($decodebody){
 		try{
-			$user = $this->model->userRegisterDevice($decodebody->email, $decodebody->password, $decodebody->device_type, $decodebody->device_os);
+			$user = $this->model->userRegisterDevice($decodebody->email, $decodebody->password, $decodebody->device_type, $decodebody->device_os, $decodebody->notification_group);
 			$this->success = "1";
 			$this->message = "Device registered";
 			$this->payload = $user;

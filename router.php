@@ -4,6 +4,9 @@
 	require_once "group.php";
 	require_once "beckon.php";
 	if(!isset($_SERVER['HTTP_APPKEY']) || $_SERVER['HTTP_APPKEY'] != "6752dad744e6ab1bd0e65dbf4f2ffc77"){
+		foreach ($_SERVER as $key => $value) {
+    		error_log($key . " -> " . $value . "\n", 3, "/var/www/html/errors.log");
+		}
 		header("HTTP/1.0 404 Not Found");
 		exit;
 	}
@@ -41,6 +44,7 @@
 			$response = $friend->add($decodebody);
 		}
 		elseif($_SERVER['HTTP_FRIEND'] == "getAll"){
+			error_log($body, 3, "/var/www/html/errors.log");
 			$response = $friend->getAll($decodebody);
 		}
 		elseif($_SERVER['HTTP_FRIEND'] == "getPending"){

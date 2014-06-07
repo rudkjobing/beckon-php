@@ -15,7 +15,7 @@ class Beckon{
 	
 	function add($decodebody){
 		try{
-			$beckons = $this->model->put(	$decodebody->email, 
+			$beckons = $this->model->put(	$decodebody->id, 
 											$decodebody->auth_key, 
 											$decodebody->device_key, 
 											$decodebody->friend_ids,
@@ -37,7 +37,7 @@ class Beckon{
 
 	function getAll($decodebody){
 		try{
-			$beckons = $this->model->getAll(	$decodebody->email, 
+			$beckons = $this->model->getAll(	$decodebody->id, 
 												$decodebody->auth_key, 
 												$decodebody->device_key);
 			$this->success = "1";

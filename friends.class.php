@@ -7,10 +7,11 @@ class Friends extends Model{
 		parent::__construct();
 	}
 
-	function getAll($email, $authkey, $device_key){
+	function getAll($id, $authkey, $device_key){
 		try{
-			$id = $this->userAuthenticate($email, $authkey, $device_key);
-			$q = mysqli_query($this->connection, "select beckon_friend.id, beckon_friend.nickname, them.email email, them.firstname firstname, them.lastname lastname from beckon_friend inner join beckon_user me on me.id = beckon_friend.inviter inner join beckon_user them on them.id = beckon_friend.invitee where me.email = '{$email}' and accepted = 'Y'");
+			$this->userAuthenticate($id, $authkey, $device_key);
+			//$q = mysqli_query($this->connection, "select beckon_friend.id, beckon_friend.nickname, them.email email, them.firstname firstname, them.lastname lastname from beckon_friend inner join beckon_user me on me.id = beckon_friend.inviter inner join beckon_user them on them.id = beckon_friend.invitee where me.id = {$id} and accepted = 'Y'");
+			$q = mysqli_query($this->connection, "select beckon_friend.id, beckon_friend.nickname, them.email email, them.firstname firstname, them.lastname lastname from beckon_friend inner join beckon_user them on them.id = beckon_friend.invitee where inviter = {$id} and accepted = 'Y'");
 			if(mysqli_num_rows($q) > 0){
 				$friends = array();
 				while($r = mysqli_fetch_assoc($q)){
@@ -28,10 +29,10 @@ class Friends extends Model{
 		}
 	}
 
-	function getRequests($email, $authkey, $device_key){
+	function getRequests($id, $authkey, $device_key){
 		try{
-			$id = $this->userAuthenticate($email, $authkey, $device_key);
-			$q = mysqli_query($this->connection, "select beckon_friend.nickname, them.email email, them.firstname firstname, them.lastname lastname from beckon_friend inner join beckon_user me on me.id = beckon_friend.invitee inner join beckon_user them on them.id = beckon_friend.inviter where me.email = '{$email}' and accepted = 'P'");
+			$this->userAuthenticate($id, $authkey, $device_key);
+			$q = mysqli_query($this->connection, "select beckon_friend.nickname, them.email email, them.firstname firstname, them.lastname lastname from beckon_friend inner join beckon_user me on me.id = beckon_friend.invitee inner join beckon_user them on them.id = beckon_friend.inviter where me.id = {$id} and accepted = 'P'");
 			if(mysqli_num_rows($q) > 0){
 				$friends = array();
 				while($r = mysqli_fetch_assoc($q)){
@@ -49,10 +50,10 @@ class Friends extends Model{
 		}
 	}
 	
-	function get($email, $authkey, $device_key, $friend_email){
+	function get($id, $authkey, $device_key, $friend_email){
 		try{
-			$id = $this->userAuthenticate($email, $authkey, $device_key);
-			$q = mysqli_query($this->connection, "select beckon_friend.nickname, them.email email, them.firstname firstname, them.lastname lastname from beckon_friend inner join beckon_user me on me.id = beckon_friend.inviter inner join beckon_user them on them.id = beckon_friend.invitee where them.email = '{$friend_email}' and me.email = '{$email}' and accepted = 'Y'");
+			$this->userAuthenticate($id, $authkey, $device_key);
+			$q = mysqli_query($this->connection, "select beckon_friend.nickname, them.email email, them.firstname firstname, them.lastname lastname from beckon_friend inner join beckon_user me on me.id = beckon_friend.inviter inner join beckon_user them on them.id = beckon_friend.invitee where them.email = '{$friend_email}' and me.id = {$id} and accepted = 'Y'");
 			if(mysqli_num_rows($q) > 0){
 				$r = mysqli_fetch_assoc($q);
 				$friend = array("nickname" => $r['nickname'], "email" => $r['email'], "firstname" => $r['firstname'], "lastname" => $r['lastname']);
@@ -67,14 +68,14 @@ class Friends extends Model{
 		}
 	}
 			
-	function put($email, $authkey, $device_key, $friend_email){
+	function put($id, $authkey, $device_key, $friend_email){
 		try{
 			if($email == $friend_email){
 				throw new Exception("You cannot be friends with yourself");
 			}
-			$id = $this->userAuthenticate($email, $authkey, $device_key);
-			$q = mysqli_query($this->connection, "select them.email from beckon_friend inner join beckon_user me on me.id = beckon_friend.inviter inner join beckon_user them on them.id = beckon_friend.invitee where me.email = '{$email}' and them.email = '{$friend_email}'");
-			$q2 = mysqli_query($this->connection, "select them.email from beckon_friend inner join beckon_user me on me.id = beckon_friend.invitee inner join beckon_user them on them.id = beckon_friend.inviter where me.email = '{$email}' and them.email = '{$friend_email}'");
+			$this->userAuthenticate($id, $authkey, $device_key);
+			$q = mysqli_query($this->connection, "select them.email from beckon_friend inner join beckon_user me on me.id = beckon_friend.inviter inner join beckon_user them on them.id = beckon_friend.invitee where me.id = {$id} and them.email = '{$friend_email}'");
+			$q2 = mysqli_query($this->connection, "select them.email from beckon_friend inner join beckon_user me on me.id = beckon_friend.invitee inner join beckon_user them on them.id = beckon_friend.inviter where me.id = {$id} and them.email = '{$friend_email}'");
 			if(mysqli_num_rows($q) > 0){
 				throw new Exception("You are already friends with this person");
 			}
@@ -86,7 +87,10 @@ class Friends extends Model{
 				$r = mysqli_fetch_assoc($q);
 				$nickname = $r['firstname']." ".$r['lastname'];
 				$q = mysqli_query($this->connection, "insert into beckon_friend (nickname, inviter, invitee) values ('{$nickname}', {$id}, {$r['id']})");
+				//Send notification
+				$nc = new NotificationCenter();
 				mysqli_commit($this->connection);
+				$nc->dispatchNotification(array($r['id']), "Friend request", 1, array("freq" => 1));
 				#return $this->friendGet($email, $authkey);
 			}
 			else{
@@ -99,9 +103,9 @@ class Friends extends Model{
 		}
 	}
 	
-	function acceptRequest($email, $authkey, $device_key, $friend_email){
+	function acceptRequest($id, $authkey, $device_key, $friend_email){
 		try{
-			$id = $this->userAuthenticate($email, $authkey, $device_key);
+			$this->userAuthenticate($id, $authkey, $device_key);
 			$q = mysqli_query($this->connection, "select beckon_friend.id from beckon_friend where invitee = {$id} and accepted = 'P' and inviter = (select id from beckon_user where email = '{$friend_email}' limit 1)");
 			if(mysqli_num_rows($q) > 0){
 				$r = mysqli_fetch_assoc($q);
@@ -120,9 +124,9 @@ class Friends extends Model{
 		}
 	}
 	
-	function delete($email, $authkey, $device_key, $friend_email){
+	function delete($id, $authkey, $device_key, $friend_email){
 		try{
-			$id = $this->userAuthenticate($email, $authkey, $device_key);
+			$this->userAuthenticate($id, $authkey, $device_key);
 			$q = mysqli_query($this->connection, "select id from beckon_user where email = '{$friend_email}'");
 			$r = mysqli_fetch_assoc($q);
 			$friend_id = $r['id'];
