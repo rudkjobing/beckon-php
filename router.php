@@ -10,9 +10,10 @@
 		header("HTTP/1.0 404 Not Found");
 		exit;
 	}
-	
+
 	$response = json_decode('{"success" : "0" , "message" : "fatal error" , "payload" : ""}');
 	$body = file_get_contents('php://input'); 
+	error_log($body, 3, "/var/www/html/errors.log");
 	$decodebody = json_decode($body);
 	if(isset($_SERVER['HTTP_USER'])){
 		$user = New User();
@@ -44,7 +45,6 @@
 			$response = $friend->add($decodebody);
 		}
 		elseif($_SERVER['HTTP_FRIEND'] == "getAll"){
-			error_log($body, 3, "/var/www/html/errors.log");
 			$response = $friend->getAll($decodebody);
 		}
 		elseif($_SERVER['HTTP_FRIEND'] == "getPending"){
