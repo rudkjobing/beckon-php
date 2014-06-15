@@ -98,7 +98,7 @@ class GroupMember extends Persistence implements JsonSerializable{
 
     //Serialization
     public function jsonSerialize(){
-        return array("friend" => $this->getFriend()->jsonSerialize(), "group" => $this->getGroup()->getId());//TODO add memberprintout
+        return array("friend" => $this->getFriend()->getId(), "group" => $this->getGroup()->getId());//TODO add memberprintout
     }
 
     //Factory

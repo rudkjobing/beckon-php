@@ -2,11 +2,11 @@
 /**
  * Created by PhpStorm.
  * User: steffen
- * Date: 07/06/14
- * Time: 13:21
+ * Date: 15/06/14
+ * Time: 17:21
  */
-include "Collection.interface.php";
-class BeckonMemberCollection extends Persistence implements JsonSerializable,Collection{
+
+class ChatMessageCollection extends Persistence implements JsonSerializable,Collection{
 
     private $id = null;
     private $entities;
@@ -32,8 +32,8 @@ class BeckonMemberCollection extends Persistence implements JsonSerializable,Col
     }
 
     public function addItem(&$object, $key){
-        if(get_class($object) == "BeckonMember"){
-            $this->entities[$key] = &$object;
+        if(get_class($object) == "ChatMessage"){
+            $this->entities[$key] = $object;
         }
         else{
             throw new Exception("Invalid object type");
@@ -46,8 +46,8 @@ class BeckonMemberCollection extends Persistence implements JsonSerializable,Col
 
     public function sync(){
         if(!is_null($this->id)){
-            foreach($this->q("select * from BeckonMember where beckon = {$this->id}") as $beckonMember){
-                $this->addItem(BeckonMember::buildExisting($beckonMember['id'], $beckonMember['beckon'], $beckonMember['user']), $beckonMember['id']);
+            foreach($this->q("select * from ChatMessage where chatRoom = {$this->id}") as $chatMessage){
+                $this->addItem(ChatMessage::buildExisting($chatMessage['id'],  $chatMessage['chatRoom'], $chatMessage['owner'], $chatMessage['message']), $chatMessage['id']);
             }
         }
     }

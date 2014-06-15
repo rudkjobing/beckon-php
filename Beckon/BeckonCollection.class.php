@@ -46,9 +46,9 @@ class BeckonCollection extends Persistence implements JsonSerializable,Collectio
 
     public function sync(){
         if(!is_null($this->id)){
-            foreach($this->q("select * from Beckon where owner = {$this->id}") as $beckon){
+            /*foreach($this->q("select * from Beckon where owner = {$this->id}") as $beckon){
                 $this->addItem(Beckon::buildExisting($beckon['id'], $beckon['name'], $beckon['begins'], $beckon['ends'], $beckon['owner']), $beckon['id']);
-            }
+            }*/
             foreach($this->q("select Beckon.id, Beckon.name, Beckon.begins, Beckon.ends, Beckon.owner, Beckon.id from BeckonMember inner join Beckon on BeckonMember.beckon = Beckon.id where BeckonMember.user = {$this->id}") as $beckon){
                 $this->addItem(Beckon::buildExisting($beckon['id'], $beckon['name'], $beckon['begins'], $beckon['ends'], $beckon['owner']), $beckon['id']);
             }

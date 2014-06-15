@@ -54,7 +54,7 @@ abstract class Persistence{
         self::$queryCount++;
 
         try{
-            array_push(self::$queries, array("Time" => 0 , "Query" => $query));
+            //array_push(self::$queries, array("Time" => 0 , "Query" => $query));
             $begin = microtime();
             $r = self::$connection->query($query);
             $end = microtime();

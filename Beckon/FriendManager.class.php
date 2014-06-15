@@ -19,6 +19,7 @@ class FriendManager {
             $friendMe->setPeer($friendThem);
             $friendThem->flush();
             $friendMe->flush();
+            Notification::buildNew($friendUser,$friendThem,"Friend request received");
             return array("status" => 1, "message" => "Friend request sent", "payload" => "");
         }
         catch(Exception $e){

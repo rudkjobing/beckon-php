@@ -98,7 +98,7 @@ class BeckonMember extends Persistence implements JsonSerializable{
 
     //Serialization
     public function jsonSerialize(){
-        return array("user" => $this->getUser()->jsonSerialize(), "beckon" => $this->getBeckon()->getId());
+        return array("user" => $this->getUser()->getId(), "beckon" => $this->getBeckon()->getId());
     }
 
     //Factory
@@ -139,7 +139,7 @@ class BeckonMember extends Persistence implements JsonSerializable{
             $beckonMember->setuser(self::cacheGet("User", $userId));
         }
         catch(Exception $e){
-            $beckonMember->setFriend(User::build($userId));
+            $beckonMember->setUser(User::build($userId));
         }
         return $beckonMember;
     }

@@ -33,7 +33,6 @@ class Beckon extends Persistence implements JsonSerializable{
     }
 
     public function setName($name){
-        $name = self::getConnection()->quote($name);
         if($this->name != $name){
             $this->name = $name;
             $this->dirty = true;
@@ -41,7 +40,6 @@ class Beckon extends Persistence implements JsonSerializable{
     }
 
     public function setBegins($begins){
-        $begins = self::getConnection()->quote($begins);
         if($this->begins != $begins){
             $this->begins = $begins;
             $this->dirty = true;
@@ -49,7 +47,6 @@ class Beckon extends Persistence implements JsonSerializable{
     }
 
     public function setEnds($ends){
-        $ends = self::getConnection()->quote($ends);
         if($this->ends != $ends){
             $this->ends = $ends;
             $this->dirty = true;
@@ -138,7 +135,7 @@ class Beckon extends Persistence implements JsonSerializable{
 
     //Serialization
     public function jsonSerialize(){
-        return array("id" => $this->getId(), "owner" => $this->getOwner()->jsonSerialize(), "name" => $this->getName(), "begins" => $this->getBegins(), "ends" => $this->getEnds(), "members" => $this->getMembers()->jsonSerialize());//TODO add memberprintout
+        return array("id" => $this->getId(), "owner" => $this->getOwner()->getId(), "name" => $this->getName(), "begins" => $this->getBegins(), "ends" => $this->getEnds(), "members" => $this->getMembers()->jsonSerialize());//TODO add memberprintout
     }
 
     //Factory

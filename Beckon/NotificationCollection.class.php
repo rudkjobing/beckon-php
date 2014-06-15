@@ -2,11 +2,11 @@
 /**
  * Created by PhpStorm.
  * User: steffen
- * Date: 07/06/14
- * Time: 13:21
+ * Date: 15/06/14
+ * Time: 13:40
  */
-include "Collection.interface.php";
-class BeckonMemberCollection extends Persistence implements JsonSerializable,Collection{
+
+class NotificationCollection extends Persistence implements JsonSerializable,Collection{
 
     private $id = null;
     private $entities;
@@ -32,7 +32,7 @@ class BeckonMemberCollection extends Persistence implements JsonSerializable,Col
     }
 
     public function addItem(&$object, $key){
-        if(get_class($object) == "BeckonMember"){
+        if(get_class($object) == "Notification"){
             $this->entities[$key] = &$object;
         }
         else{
@@ -46,8 +46,8 @@ class BeckonMemberCollection extends Persistence implements JsonSerializable,Col
 
     public function sync(){
         if(!is_null($this->id)){
-            foreach($this->q("select * from BeckonMember where beckon = {$this->id}") as $beckonMember){
-                $this->addItem(BeckonMember::buildExisting($beckonMember['id'], $beckonMember['beckon'], $beckonMember['user']), $beckonMember['id']);
+            foreach($this->q("select * from Notification where owner = {$this->id}") as $notification){
+                $this->addItem(Notification::buildExisting($notification['id'],  $notification['owner'], $notification['objectClass'], $notification['object'], $notification['message']), $notification['id']);
             }
         }
     }

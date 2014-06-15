@@ -2,11 +2,11 @@
 /**
  * Created by PhpStorm.
  * User: steffen
- * Date: 07/06/14
- * Time: 13:21
+ * Date: 15/06/14
+ * Time: 16:21
  */
-include "Collection.interface.php";
-class BeckonMemberCollection extends Persistence implements JsonSerializable,Collection{
+
+class ChatRoomCollection extends Persistence implements JsonSerializable,Collection{
 
     private $id = null;
     private $entities;
@@ -32,7 +32,7 @@ class BeckonMemberCollection extends Persistence implements JsonSerializable,Col
     }
 
     public function addItem(&$object, $key){
-        if(get_class($object) == "BeckonMember"){
+        if(get_class($object) == "ChatRoom"){
             $this->entities[$key] = &$object;
         }
         else{
@@ -46,8 +46,8 @@ class BeckonMemberCollection extends Persistence implements JsonSerializable,Col
 
     public function sync(){
         if(!is_null($this->id)){
-            foreach($this->q("select * from BeckonMember where beckon = {$this->id}") as $beckonMember){
-                $this->addItem(BeckonMember::buildExisting($beckonMember['id'], $beckonMember['beckon'], $beckonMember['user']), $beckonMember['id']);
+            foreach($this->q("select ChatRoom.id, ChatRoom.owner from ChatRoom inner join ChatRoomMember on ChatRoom.id = ChatRoomMember.chatRoom where ChatRoomMember.`user` = {$this->id}") as $chatRoom){
+                $this->addItem(ChatRoom::buildExisting($chatRoom['id'],  $chatRoom['owner']), $chatRoom['id']);
             }
         }
     }

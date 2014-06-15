@@ -6,10 +6,12 @@
  * Time: 13:25
  */
 
-include "FriendCollection.class.php";
-include "GroupCollection.class.php";
-include "BeckonCollection.class.php";
-include "DeviceCollection.class.php";
+include_once "FriendCollection.class.php";
+include_once "GroupCollection.class.php";
+include_once "BeckonCollection.class.php";
+include_once "DeviceCollection.class.php";
+include_once "NotificationCollection.class.php";
+include_once "ChatRoomCollection.class.php";
 
 class User extends Persistence implements JsonSerializable{
 
@@ -25,10 +27,12 @@ class User extends Persistence implements JsonSerializable{
     private $lastName = null;
     private $emailAddress = null;
     private $password = null;
-    private $devices;//Device container
-    private $friends;//Friend container
-    private $beckons;//Beckon container
-    private $groups;//Group container
+    private $devices;//Device collection
+    private $friends;//Friend collection
+    private $beckons;//Beckon collection
+    private $groups;//Group collection
+    private $notifications;//Notification collection
+    private $chatRooms;//ChatRoom collection
 
 
     //Setters
@@ -89,6 +93,14 @@ class User extends Persistence implements JsonSerializable{
     public function getBeckons(){
         if(!is_null($this->beckons)){return $this->beckons;}
         else{$this->beckons = new BeckonCollection($this->id);return $this->beckons;}
+    }
+    public function getNotifications(){
+        if(!is_null($this->notifications)){return $this->notifications;}
+        else{$this->notifications = new NotificationCollection($this->id);return $this->notifications;}
+    }
+    public function getChatRooms(){
+        if(!is_null($this->chatRooms)){return $this->chatRooms;}
+        else{$this->chatRooms = new ChatRoomCollection($this->id);return $this->chatRooms;}
     }
 
     //Persistence
@@ -152,7 +164,7 @@ class User extends Persistence implements JsonSerializable{
     }
 
     public function getJsonSerializedTree() {
-        return array("firstName" => $this->getFirstName(), "lastName" => $this->getLastName(), "emailAddress" => $this->getEmailAddress(), "devices" => $this->getDevices()->jsonSerialize(), "friends" => $this->getFriends()->jsonSerialize(), "beckons" => $this->getBeckons()->jsonSerialize(), "groups" => $this->getGroups()->jsonSerialize());
+        return array("firstName" => $this->getFirstName(), "lastName" => $this->getLastName(), "emailAddress" => $this->getEmailAddress(), "devices" => $this->getDevices()->jsonSerialize(), "friends" => $this->getFriends()->jsonSerialize(), "beckons" => $this->getBeckons()->jsonSerialize(), "groups" => $this->getGroups()->jsonSerialize(), "notifications" => $this->getNotifications()->jsonSerialize(), "chatRooms" => $this->getChatRooms()->jsonSerialize());
     }
 
     //Factory
@@ -210,7 +222,7 @@ class User extends Persistence implements JsonSerializable{
         $stmt = self::getConnection()->prepare("select * from User where emailAddress = :email");
         $stmt->execute(array("email" => $email));
         $set = $stmt->fetchAll();
-        if($set->rowCount() > 0){
+        if($stmt->rowCount() > 0){
             foreach($set as $row){
                 $user = self::build($row['id']);
                 $user->emailAddress = $row['emailAddress'];

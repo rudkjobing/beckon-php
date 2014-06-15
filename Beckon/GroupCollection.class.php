@@ -31,6 +31,10 @@ class GroupCollection extends Persistence implements JsonSerializable,Collection
         return array_keys($this->entities);
     }
 
+    public function getIterator(){
+        return array_values($this->entities);
+    }
+
     public function addItem(&$object, $key){
         if(get_class($object) == "Group"){
             $this->entities[$key] = &$object;

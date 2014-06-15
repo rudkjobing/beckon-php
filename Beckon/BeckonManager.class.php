@@ -8,88 +8,32 @@
 
 class BeckonManager {
 
-    public static function addBeckon($user, $beckonName, $begins, $ends, $groups, $friends){
+    public static function addBeckon($creator, $beckonName, $begins, $ends, $groups, $friends){
         try{
-            $beckon = Group::buildNew($beckonName, $user, $begins, $ends);
+            $beckon = Beckon::buildNew($beckonName, $creator, $begins, $ends);
+            $users = array();
+            foreach($groups as $group){
+                $members = Group::build($group)->getMembers()->getIterator();
+                foreach($members as $member){
+                    array_push($users, $member->getFriend()->getPeer()->getOwner());
+                }
+            }
+            foreach($friends as $friend){
+                $friend = Friend::build($friend);
+                array_push($users, $friend->getPeer()->getOwner());
+            }
+            $users = array_unique($users);
+            foreach($users as $user){
+                $beckonMember = BeckonMember::buildNew($beckon, $user);
+                Notification::buildNew($user, $beckon, "You have been invited to join this Beckon");
+            }
+            BeckonMember::buildNew($beckon, $creator);
 
-            return array("status" => 1, "message" => "Group created", "payload" => array("group"=> $group->jsonSerialize()));
+            return array("status" => 1, "message" => "Beckon created", "payload" => array("beckon"=> $beckon->jsonSerialize()));
         }
         catch(Exception $e){
-            return array("status" => 0, "message" => $e->getMessage(), "payload" => "");
-        }
-    }
-
-    public static function getGroups($user){
-        try{
-            $groups = $user->getGroups();
-            return array("status" => 1, "message" => "Group created", "payload" => array("groups"=> $groups->jsonSerialize()));
-        }
-        catch(Exception $e){
-            return array("status" => 0, "message" => $e->getMessage(), "payload" => "");
-        }
-    }
-
-    public static function getGroupMembers($user, $groupId){
-        try{
-            $group = Group::build($groupId);
-            if($group->getOwner()->getId() == $user->getId()){
-                return array("status" => 1, "message" => "Group created", "payload" => array("groups"=> $group->getMembers()->jsonSerialize()));
-            }
-            else{
-                return array("status" => 0, "message" => "Operation forbidden", "payload" => "");
-            }
-        }
-        catch(Exception $e){
-            return array("status" => 0, "message" => $e->getMessage(), "payload" => "");
-        }
-    }
-
-    public static function addGroupMember($user, $groupId, $friendId){
-        try{
-            $group = Group::build($groupId);
-            $friend = Friend::build($friendId);
-            if($group->getOwner()->getId() == $user->getId() && $friend->getOwner()->getId() == $user->getId()){
-                $member = GroupMember::buildNew($group, $friend);
-                return array("status" => 1, "message" => "Member added", "payload" => array("member"=> $member->jsonSerialize()));
-            }
-            else{
-                return array("status" => 0, "message" => "Operation forbidden", "payload" => "");
-            }
-        }
-        catch(Exception $e){
-            return array("status" => 0, "message" => $e->getMessage(), "payload" => "");
-        }
-    }
-
-    public static function deleteGroup($user, $groupId){
-        try{
-            $group = Group::build($groupId);
-            if($group->getOwner()->getId() == $user->getId()){
-                $group->delete();
-                return array("status" => 1, "message" => "Group deleted", "payload" => "");
-            }
-            else{
-                return array("status" => 0, "message" => "Operation forbidden", "payload" => "");
-            }
-        }
-        catch(Exception $e){
-            return array("status" => 0, "message" => $e->getMessage(), "payload" => "");
-        }
-    }
-
-    public static function removeMember($user, $memberId){
-        try{
-            $member = GroupMember::build($memberId);
-            if($member->getGroup()->getOwner->getId() == $user->getId()){
-                $member->delete();
-                return array("status" => 1, "message" => "Group member deleted", "payload" => "");
-            }
-            else{
-                return array("status" => 0, "message" => "Operation forbidden", "payload" => "");
-            }
-        }
-        catch(Exception $e){
-            return array("status" => 0, "message" => $e->getMessage(), "payload" => "");
+            //return array("status" => 0, "message" => $e->getMessage(), "payload" => "");
+            throw $e;
         }
     }
 

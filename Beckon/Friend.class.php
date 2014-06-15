@@ -165,7 +165,7 @@ class Friend extends Persistence implements JsonSerializable{
         $friend->setUser($user);
         try{
             $stmt = self::getConnection()->prepare("insert into Friend (nickName, owner, user) values (:nickName, :owner, :user)");
-            $stmt->execute(array("nickName" => $nickName, "owner" => $owner, "user" => $user));
+            $stmt->execute(array("nickName" => $nickName, "owner" => $owner->getId(), "user" => $user->getId()));
             //$q = self::q("insert into Friend (nickName, owner, user) values ('$nickName', {$owner->getId()}, {$user->getId()})");
             $friend->id = self::$connection->lastInsertId();
             self::cachePut("Friend", $friend->getId(), $friend);
