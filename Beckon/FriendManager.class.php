@@ -65,7 +65,7 @@ class FriendManager {
 
     public static function getFriends($user){
         try{
-            return array("status" => 1, "message" => "Friends fetched", $user->getFriends()->jsonSerialize());
+            return array("status" => 1, "message" => "Friends fetched", "payload" => array("friends" => $user->getFriends()->jsonSerialize()));
         }
         catch(Exception $e){
             return array("status" => 0, "message" => $e->getMessage(), "payload" => "");

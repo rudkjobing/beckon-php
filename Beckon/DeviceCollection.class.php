@@ -31,7 +31,11 @@ class DeviceCollection extends Persistence implements JsonSerializable,Collectio
         return array_keys($this->entities);
     }
 
-    public function addItem(&$object, $key){
+    public function getIterator(){
+        return array_values($this->entities);
+    }
+
+    public function addItem(Device &$object, $key){
         if(get_class($object) == "Device"){
             $this->entities[$key] = $object;
         }
@@ -70,7 +74,7 @@ class DeviceCollection extends Persistence implements JsonSerializable,Collectio
     public function jsonSerialize(){
         $result = array();
         foreach($this->entities as $key => $object){
-            array_push($result, array($key, $object->jsonSerialize()));
+            array_push($result, $object->jsonSerialize());
         }
         return $result;
     }

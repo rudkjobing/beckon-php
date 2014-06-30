@@ -8,8 +8,6 @@
 
 interface Collection {
 
-    public function addItem(&$obj, $key);
-    public function deleteItem($key);
-    public function getItem($key);
+
 
 } 

@@ -18,7 +18,7 @@ class Beckon extends Persistence implements JsonSerializable{
 
     //Properties
     private $id = null;
-    private $name = null;
+    private $title = null;
     private $owner = null;//User
     private $members = null;//BeckonMemberCollection of Friends
     private $begins = null;
@@ -32,9 +32,9 @@ class Beckon extends Persistence implements JsonSerializable{
         }
     }
 
-    public function setName($name){
-        if($this->name != $name){
-            $this->name = $name;
+    public function setTitle($title){
+        if($this->title != $title){
+            $this->title = $title;
             $this->dirty = true;
         }
     }
@@ -58,9 +58,9 @@ class Beckon extends Persistence implements JsonSerializable{
         if(!is_null($this->id)){return $this->id;}
         else{$this->sync();return $this->id;}
     }
-    public function getName(){
-        if(!is_null($this->name)){return $this->name;}
-        else{$this->sync();return $this->name;}
+    public function getTitle(){
+        if(!is_null($this->title)){return $this->title;}
+        else{$this->sync();return $this->title;}
     }
     public function getOwner(){
         if(!is_null($this->owner)){return $this->owner;}
@@ -83,16 +83,16 @@ class Beckon extends Persistence implements JsonSerializable{
     //Persistence
     public function flush(){
         if($this->dirty){
-            if($this->name == ""){throw new Exception("Object contains empty fields");}
+            if($this->title == ""){throw new Exception("Object contains empty fields");}
             elseif(!is_null($this->id)){
-                $stmt = self::getConnection()->prepare("update Beckon set owner = :owner, name = :name, begins = :begins, ends = :ends where id = :id");
-                $stmt->execute(array("name" => $this->getName(), "owner" => $this->getOwner()->getId(), "begins" => $this->getBegins(), "ends" => $this->getEnds(), "id" => $this->getId()));
+                $stmt = self::getConnection()->prepare("update Beckon set owner = :owner, title = :title, begins = :begins, ends = :ends where id = :id");
+                $stmt->execute(array("title" => $this->getTitle(), "owner" => $this->getOwner()->getId(), "begins" => $this->getBegins(), "ends" => $this->getEnds(), "id" => $this->getId()));
                 $this->dirty = false;
             }
             elseif(is_null($this->id)){
                 try{
-                    $stmt = self::getConnection()->prepare("insert into Beckon (name, owner, begins, ends) values (:name, :owner, :begins, :ends)");
-                    $stmt->execute(array("name" => $this->getName(), "owner" => $this->getOwner()->getId(), "begins" => $this->getBegins(), "ends" => $this->getEnds()));
+                    $stmt = self::getConnection()->prepare("insert into Beckon (title, owner, begins, ends) values (:title, :owner, :begins, :ends)");
+                    $stmt->execute(array("title" => $this->getTitle(), "owner" => $this->getOwner()->getId(), "begins" => $this->getBegins(), "ends" => $this->getEnds()));
                     $this->id = self::$connection->lastInsertId();
                     self::cachePut("Beckon", $this->getId(), $this);
                     $this->dirty = false;
@@ -118,7 +118,7 @@ class Beckon extends Persistence implements JsonSerializable{
                 foreach($set as $row){
                     $this->id = $row['id'];
                     $this->owner = User::build($row['owner']);
-                    $this->name = $row['name'];
+                    $this->title = $row['title'];
                     $this->begins = $row['begins'];
                     $this->ends = $row['ends'];
                     $this->dirty = false;
@@ -135,7 +135,7 @@ class Beckon extends Persistence implements JsonSerializable{
 
     //Serialization
     public function jsonSerialize(){
-        return array("id" => $this->getId(), "owner" => $this->getOwner()->getId(), "name" => $this->getName(), "begins" => $this->getBegins(), "ends" => $this->getEnds(), "members" => $this->getMembers()->jsonSerialize());//TODO add memberprintout
+        return array("id" => $this->getId(), "owner" => $this->getOwner()->getId(), "title" => $this->getTitle(), "begins" => $this->getBegins(), "ends" => $this->getEnds(), "members" => $this->getMembers()->jsonSerialize());
     }
 
     //Factory
@@ -150,9 +150,9 @@ class Beckon extends Persistence implements JsonSerializable{
         }
     }
 
-    public static function buildNew($name, $owner, $begins, $ends){
+    public static function buildNew($title, $owner, $begins, $ends){
         $beckon = New Beckon();
-        $beckon->setName($name);
+        $beckon->setTitle($title);
         $beckon->setOwner($owner);
         $beckon->setBegins($begins);
         $beckon->setEnds($ends);
@@ -165,9 +165,9 @@ class Beckon extends Persistence implements JsonSerializable{
         return $beckon;
     }
 
-    public static function buildExisting($id, $name, $begins, $ends, $ownerId){
+    public static function buildExisting($id, $title, $begins, $ends, $ownerId){
         $beckon = self::build($id);
-        $beckon->name = $name;
+        $beckon->title = $title;
         $beckon->begins = $begins;
         $beckon->ends = $ends;
         $beckon->owner = User::build($ownerId);

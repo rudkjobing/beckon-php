@@ -40,9 +40,9 @@ class UserManager {
     }
 
     //Returns the entire data tree of the user
-    public static function getSnapshot($user){
+    public static function getState($user){
         try{
-            return array("status" => 1, "message" => "User snapshot", "payload" => array("cookie" => $user->getJsonSerializedTree()));
+            return array("status" => 1, "message" => "State", "payload" => array("user" => $user->getJsonSerializedTree()));
         }
         catch(Exception $e){
             return array("status" => 0, "message" => $e->getMessage(), "payload" => "");

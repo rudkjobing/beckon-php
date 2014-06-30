@@ -70,7 +70,7 @@ class NotificationCollection extends Persistence implements JsonSerializable,Col
     public function jsonSerialize(){
         $result = array();
         foreach($this->entities as $key => $object){
-            array_push($result, array($key, $object->jsonSerialize()));
+            array_push($result, array($key => $object->jsonSerialize()));
         }
         return $result;
     }

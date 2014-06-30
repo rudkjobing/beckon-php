@@ -28,7 +28,6 @@ class Cookie extends Persistence implements JsonSerializable{
     }
 
     public function setCookie($cookie){
-        $cookie = self::getConnection()->quote($cookie);
         if($this->cookie != $cookie){
             $this->cookie = $cookie;
             $this->dirty = true;
@@ -58,12 +57,12 @@ class Cookie extends Persistence implements JsonSerializable{
     public function flush(){
         if($this->dirty){
             if(!is_null($this->id)){
-                $this->q("update Cookie set owner = {$this->getOwner()->getId()}, cookie = {$this->getCookie()} where id = {$this->getId()}");
+                $this->q("update Cookie set owner = {$this->getOwner()->getId()}, cookie = '{$this->getCookie()}' where id = {$this->getId()}");
                 $this->dirty = false;
             }
             elseif(is_null($this->id)){
                 try{
-                    $this->q("insert into Cookie (owner, cookie) values ({$this->getOwner()->getId()}, {$this->getCookie()})");
+                    $this->q("insert into Cookie (owner, cookie) values ({$this->getOwner()->getId()}, '{$this->getCookie()}')");
                     $this->id = self::$connection->lastInsertId();
                     self::cachePut("Cookie", $this->getId(), $this);
                     $this->dirty = false;
@@ -84,7 +83,7 @@ class Cookie extends Persistence implements JsonSerializable{
 
     public function sync(){
         if(!is_null($this->id)){
-            $set = $this->q("select * from Cookie where id = {$this->id} and cookie = {$this->cookie}");
+            $set = $this->q("select * from Cookie where id = {$this->id} and cookie = '{$this->cookie}'");
             if($set->rowCount() > 0){
                 foreach($set as $row){
                     $this->id = $row['id'];
@@ -115,7 +114,7 @@ class Cookie extends Persistence implements JsonSerializable{
         catch(Exception $e){
             $cookie = new Cookie($id);
             $cookie->setCookie($_cookie);
-            self::cachePut("Cookie", $id, $cookie);
+            self::cachePut("Cookie", $id, $cookie);//TODO FIX THIS SHIT
             return $cookie;
         }
     }
@@ -128,7 +127,7 @@ class Cookie extends Persistence implements JsonSerializable{
             $cookie->flush();
         }
         catch(Exception $e){
-            throw New Exception(__function__,0 ,$e);
+            throw New Exception($e->getMessage(),0 ,$e);
         }
         return $cookie;
     }

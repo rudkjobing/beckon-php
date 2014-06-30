@@ -71,7 +71,7 @@ class FriendCollection extends Persistence implements JsonSerializable,Collectio
     public function jsonSerialize(){
         $result = array();
         foreach($this->entities as $key => $object){
-            array_push($result, array($key, $object->jsonSerialize()));
+            array_push($result, $object->jsonSerialize());
         }
         return $result;
     }

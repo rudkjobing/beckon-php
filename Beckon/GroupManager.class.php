@@ -10,7 +10,7 @@ class GroupManager {
 
     public static function addGroup($user, $groupName){
         try{
-            $group = Group::buildNew($groupName, $user);
+            $group = Group::buildNew($user, $groupName);
             return array("status" => 1, "message" => "Group created", "payload" => array("group"=> $group->jsonSerialize()));
         }
         catch(Exception $e){
@@ -32,7 +32,7 @@ class GroupManager {
         try{
             $group = Group::build($groupId);
             if($group->getOwner()->getId() == $user->getId()){
-                return array("status" => 1, "message" => "Group created", "payload" => array("groups"=> $group->getMembers()->jsonSerialize()));
+                return array("status" => 1, "message" => "Group created", "payload" => array("groupMembers"=> $group->getMembers()->jsonSerialize()));
             }
             else{
                 return array("status" => 0, "message" => "Operation forbidden", "payload" => "");
@@ -47,7 +47,7 @@ class GroupManager {
         try{
             $group = Group::build($groupId);
             $friend = Friend::build($friendId);
-            if($group->getOwner()->getId() == $user->getId() && $friend->getOwner()->getId() == $user->getId()){
+            if($group->getOwner() == $user && $friend->getOwner() == $user){
                 $member = GroupMember::buildNew($group, $friend);
                 return array("status" => 1, "message" => "Member added", "payload" => array("member"=> $member->jsonSerialize()));
             }
@@ -60,10 +60,10 @@ class GroupManager {
         }
     }
 
-    public static function deleteGroup($user, $groupId){
+    public static function delete($user, $groupId){
         try{
             $group = Group::build($groupId);
-            if($group->getOwner()->getId() == $user->getId()){
+            if($group->getOwner() == $user){
                 $group->delete();
                 return array("status" => 1, "message" => "Group deleted", "payload" => "");
             }
@@ -76,15 +76,16 @@ class GroupManager {
         }
     }
 
-    public static function removeMember($user, $memberId){
+    public static function removeGroupMember($user, $friendId, $groupId){
         try{
-            $member = GroupMember::build($memberId);
-            if($member->getGroup()->getOwner->getId() == $user->getId()){
-                $member->delete();
-                return array("status" => 1, "message" => "Group member deleted", "payload" => "");
-            }
-            else{
-                return array("status" => 0, "message" => "Operation forbidden", "payload" => "");
+            $group = Group::build($groupId);
+            $friend = Friend::build($friendId);
+            $members = $group->getMembers()->getIterator();
+            foreach($members as $member){
+                if($member->getFriend() == $friend){
+                    $member->delete();
+                    return array("status" => 1, "message" => "Group member deleted", "payload" => "");
+                }
             }
         }
         catch(Exception $e){

@@ -31,7 +31,6 @@ class Group extends Persistence implements JsonSerializable{
     }
 
     public function setName($name){
-        $name = self::getConnection()->quote($name);
         if($this->name != $name){
             $this->name = $name;
             $this->dirty = true;
@@ -68,7 +67,7 @@ class Group extends Persistence implements JsonSerializable{
             }
             elseif(is_null($this->id)){
                 try{
-                    $stmt = self::getConnection()->prepare("insert into `Group` (name, owner) values (:name, :owner");
+                    $stmt = self::getConnection()->prepare("insert into `Group` (name, owner) values (:name, :owner)");
                     $stmt->execute(array("name" => $this->getName(), "owner" => $this->getOwner()->getId()));
                     //$this->q("insert into `Group` (name, owner) values ({$this->getName()}, {$this->getOwner()->getId()})");
                     $this->id = self::$connection->lastInsertId();
@@ -83,7 +82,7 @@ class Group extends Persistence implements JsonSerializable{
     }
 
     public function delete(){
-        $this->q("delete from Group where id = {$this->id}");
+        $this->q("delete from `Group` where id = {$this->id}");
         foreach ($this as $key => $value) {
             unset($this->$key);
         }
@@ -111,7 +110,7 @@ class Group extends Persistence implements JsonSerializable{
 
     //Serialization
     public function jsonSerialize(){
-        return array("id" => $this->getId(), "owner" => $this->getOwner()->jsonSerialize(), "name" => $this->getName(), "members" => $this->getMembers()->jsonSerialize());//TODO add memberprintout*/
+        return array("id" => $this->getId(), "owner" => $this->getOwner()->jsonSerialize(), "name" => $this->getName(), "members" => $this->getMembers()->jsonSerialize());
     }
 
     public static function build($id){
@@ -125,7 +124,7 @@ class Group extends Persistence implements JsonSerializable{
         }
     }
 
-    public static function buildNew($name, $owner){
+    public static function buildNew($owner, $name){
         $group = New Group();
         $group->setName($name);
         $group->setOwner($owner);

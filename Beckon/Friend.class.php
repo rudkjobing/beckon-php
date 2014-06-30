@@ -38,7 +38,6 @@ class Friend extends Persistence implements JsonSerializable{
     }
 
     public function setNickName($nickName){
-        $nickName = self::getConnection()->quote($nickName);
         if($this->nickName != $nickName){
             $this->nickName = $nickName;
             $this->dirty = true;
@@ -53,7 +52,6 @@ class Friend extends Persistence implements JsonSerializable{
     }
 
     public function setStatus($status){
-        $status = self::getConnection()->quote($status);
         if($this->status != $status){
             $this->status = $status;
             $this->dirty = true;
@@ -143,7 +141,7 @@ class Friend extends Persistence implements JsonSerializable{
 
     //Serialization
     public function jsonSerialize(){
-        return array("id" => $this->getId(), "owner" => $this->getOwner()->jsonSerialize(), "nickname" => $this->getNickName(), "peer" => $this->getPeer()->getId(), "status" => $this->getStatus());
+        return array("id" => $this->getId(), "user" => $this->getUser()->jsonSerialize(), "nickname" => $this->getNickName(), "status" => $this->getStatus());
     }
 
     //Factory

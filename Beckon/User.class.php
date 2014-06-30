@@ -78,6 +78,10 @@ class User extends Persistence implements JsonSerializable{
         if(!is_null($this->emailAddress)){return $this->emailAddress;}
         else{$this->sync();return $this->emailAddress;}
     }
+    public function getPassword(){
+        if(!is_null($this->password)){return $this->password;}
+        else{$this->sync();return $this->password;}
+    }
     public function getDevices(){
         if(!is_null($this->devices)){return $this->devices;}
         else{$this->devices = new DeviceCollection($this->id);return $this->devices;}
@@ -199,7 +203,7 @@ class User extends Persistence implements JsonSerializable{
         $stmt = self::getConnection()->prepare("select * from User where emailAddress = :email");
         $stmt->execute(array("email" => $email));
         $set = $stmt->fetchAll();
-        if($set->rowCount() > 0){
+        if($stmt->rowCount() > 0){
             foreach($set as $row){
                 if(password_verify($password, $row['password'])){
                     $user = self::build($row['id']);
