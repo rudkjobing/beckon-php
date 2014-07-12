@@ -12,6 +12,8 @@ include_once "FriendManager.class.php";
 include_once "GroupManager.class.php";
 include_once "BeckonManager.class.php";
 include_once "DeviceManager.class.php";
+include_once "ChatRoomManager.class.php";
+include_once "NotificationManager.class.php";
 include_once "Beckon.class.php";
 include_once "User.class.php";
 include_once "Friend.class.php";
@@ -35,6 +37,7 @@ include_once "ChatMessage.class.php";
 
 	$response = array("status" => 0, "message" => "fatal error", "payload" => "");
 	$body = file_get_contents('php://input');
+    error_log(date("Y-m-d H:i:s"). "\n" . json_encode($_SERVER), 3, "/var/www/html/errors.log");
 	error_log(date("Y-m-d H:i:s"). "\n" . $body, 3, "/var/www/html/errors.log");
 	$client = json_decode($body);
     if(isset($client->cookie)){
@@ -42,7 +45,10 @@ include_once "ChatMessage.class.php";
             $user = UserManager::eatCookie($client->cookie->id, $client->cookie->cookie);
         }
         catch(Exception $e){
-            $response = array("status" => 0, "message" => "Invalid Cookie", "payload" => $client->cookie->id);
+            if(!isset($_SERVER['HTTP_USER'])){
+                echo json_encode(array("status" => 0, "message" => "Invalid Cookie", "payload" => $client->cookie->id));
+                exit;
+            }
         }
     }
 	if(isset($_SERVER['HTTP_USER'])){
@@ -54,6 +60,19 @@ include_once "ChatMessage.class.php";
         }
         elseif($_SERVER['HTTP_USER'] == "signIn"){
             $response = UserManager::signIn($client->email, $client->password);
+        }
+    }
+    elseif(isset($_SERVER['HTTP_NOTIFICATION'])){
+        if($_SERVER['HTTP_NOTIFICATION'] == "getNotification"){
+            $response = NotificationManager::getNotification($user, $client->notificationId);
+        }
+    }
+    elseif(isset($_SERVER['HTTP_CHATROOM'])){
+        if($_SERVER['HTTP_CHATROOM'] == "getChatRoomMessages"){
+            $response = ChatRoomManager::getChatRoomMessages($user, $client->chatRoomId);
+        }
+        elseif($_SERVER['HTTP_CHATROOM'] == 'putChatRoomMessage'){
+            $response = ChatRoomManager::putChatRoomMessage($user, $client->chatMessage->chatRoom, $client->chatMessage->message);
         }
     }
     elseif(isset($_SERVER['HTTP_BECKON'])){
@@ -102,5 +121,5 @@ include_once "ChatMessage.class.php";
         header("HTTP/1.0 404 Not Found");
         exit;
     }
-    error_log($response, 3, "/var/www/html/errors.log");
+    error_log(date("Y-m-d H:i:s"). "\n" . json_encode($response), 3, "/var/www/html/errors.log");
 	echo json_encode($response);

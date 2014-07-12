@@ -10,7 +10,8 @@ class BeckonManager {
 
     public static function addBeckon(User $creator, $title, $begins, $ends, $groups, $friends){
         try{
-            $beckon = Beckon::buildNew($title, $creator, $begins, $ends);
+            $chatRoom = ChatRoom::buildNew($creator);
+            $beckon = Beckon::buildNew($title, $creator, $begins, $ends, $chatRoom);
             $users = array();
             foreach($groups as $group){
                 $members = Group::build($group)->getMembers()->getIterator();
@@ -22,12 +23,14 @@ class BeckonManager {
                 $friend = Friend::build($friend);
                 array_push($users, $friend->getPeer()->getOwner());
             }
-            $users = array_unique($users);
+            //$users = array_unique($users);
             foreach($users as $user){
                 $beckonMember = BeckonMember::buildNew($beckon, $user);
+                $chatRoomMember = ChatRoomMember::buildNew($chatRoom,$user);
                 Notification::buildNew($user, $beckon, $creator->getFirstName() . " has sent you a Beckon");
             }
             BeckonMember::buildNew($beckon, $creator);
+            $chatRoomMember = ChatRoomMember::buildNew($chatRoom,$creator);
 
             return array("status" => 1, "message" => "Beckon created", "payload" => array("beckon"=> $beckon->jsonSerialize()));
         }

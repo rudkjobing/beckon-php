@@ -119,7 +119,7 @@ class Cookie extends Persistence implements JsonSerializable{
         }
     }
 
-    public static function buildNew($owner){
+    public static function buildNew(&$owner){
         $cookie = New Cookie();
         $cookie->setOwner($owner);
         $cookie->setCookie(sha1(uniqid(rand(),true)));

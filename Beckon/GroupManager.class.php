@@ -8,7 +8,7 @@
 
 class GroupManager {
 
-    public static function addGroup($user, $groupName){
+    public static function addGroup(&$user, $groupName){
         try{
             $group = Group::buildNew($user, $groupName);
             return array("status" => 1, "message" => "Group created", "payload" => array("group"=> $group->jsonSerialize()));
@@ -18,21 +18,21 @@ class GroupManager {
         }
     }
 
-    public static function getGroups($user){
+    public static function getGroups(&$user){
         try{
             $groups = $user->getGroups();
-            return array("status" => 1, "message" => "Group created", "payload" => array("groups"=> $groups->jsonSerialize()));
+            return array("status" => 1, "message" => "Groups fetched", "payload" => array("groups"=> $groups->jsonSerialize()));
         }
         catch(Exception $e){
             return array("status" => 0, "message" => $e->getMessage(), "payload" => "");
         }
     }
 
-    public static function getGroupMembers($user, $groupId){
+    public static function getGroupMembers(&$user, $groupId){
         try{
             $group = Group::build($groupId);
             if($group->getOwner()->getId() == $user->getId()){
-                return array("status" => 1, "message" => "Group created", "payload" => array("groupMembers"=> $group->getMembers()->jsonSerialize()));
+                return array("status" => 1, "message" => "Members fetched", "payload" => array("groupMembers"=> $group->getMembers()->jsonSerialize()));
             }
             else{
                 return array("status" => 0, "message" => "Operation forbidden", "payload" => "");
@@ -43,7 +43,7 @@ class GroupManager {
         }
     }
 
-    public static function addGroupMember($user, $groupId, $friendId){
+    public static function addGroupMember(&$user, $groupId, $friendId){
         try{
             $group = Group::build($groupId);
             $friend = Friend::build($friendId);
@@ -60,7 +60,7 @@ class GroupManager {
         }
     }
 
-    public static function delete($user, $groupId){
+    public static function delete(&$user, $groupId){
         try{
             $group = Group::build($groupId);
             if($group->getOwner() == $user){
@@ -76,7 +76,7 @@ class GroupManager {
         }
     }
 
-    public static function removeGroupMember($user, $friendId, $groupId){
+    public static function removeGroupMember(&$user, $friendId, $groupId){
         try{
             $group = Group::build($groupId);
             $friend = Friend::build($friendId);

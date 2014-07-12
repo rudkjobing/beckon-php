@@ -31,6 +31,10 @@ class ChatRoomMemberCollection extends Persistence implements JsonSerializable,C
         return array_keys($this->entities);
     }
 
+    public function getIterator(){
+        return array_values($this->entities);
+    }
+
     public function addItem(&$object, $key){
         if(get_class($object) == "ChatRoomMember"){
             $this->entities[$key] = $object;
@@ -70,7 +74,7 @@ class ChatRoomMemberCollection extends Persistence implements JsonSerializable,C
     public function jsonSerialize(){
         $result = array();
         foreach($this->entities as $key => $object){
-            array_push($result, array($key => $object->jsonSerialize()));
+            array_push($result, $object->jsonSerialize());
         }
         return $result;
     }

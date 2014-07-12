@@ -113,7 +113,7 @@ class BeckonMember extends Persistence implements JsonSerializable{
         }
     }
 
-    public static function buildNew($beckon, $user){
+    public static function buildNew(&$beckon, &$user){
         $beckonMember = New BeckonMember();
         $beckonMember->setBeckon($beckon);
         $beckonMember->setUser($user);

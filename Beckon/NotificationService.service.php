@@ -10,7 +10,7 @@ while(true){
     catch(Exception $e){
         echo "{$e}\n";
     }
-    sleep(2);
+    sleep(1);
 }
 
 class NotificationService{
@@ -47,7 +47,7 @@ class NotificationService{
         foreach($notifications as $notification){
             if($notification['type'] == "APPLEIOS"){
                 $body['aps'] = array('alert' => $notification['message'], 'sound' => 'default', 'badge' => $notification['badge']);
-                $body['prm'] = array("c" => $notification['objectClass'], "i" => $notification['object']);
+                $body['prm'] = array("nid" => $notification['id']);
                 $payload = json_encode($body);
                 $msg = chr(0) . pack('n', 32) . pack('H*', $notification['notificationKey']) . pack('n', strlen($payload)) . $payload;
                 $result = fwrite($fp, $msg, strlen($msg));

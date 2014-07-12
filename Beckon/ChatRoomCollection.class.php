@@ -6,6 +6,7 @@
  * Time: 16:21
  */
 
+
 class ChatRoomCollection extends Persistence implements JsonSerializable,Collection{
 
     private $id = null;

@@ -19,6 +19,7 @@ class ChatMessage extends Persistence implements JsonSerializable{
     private $chatRoom = null;//ChatRoom
     private $owner = null;//User
     private $message = null;
+    private $date = null;
 
     //Setters
     protected function setChatRoom(&$chatRoom){
@@ -58,6 +59,10 @@ class ChatMessage extends Persistence implements JsonSerializable{
         if(!is_null($this->message)){return $this->message;}
         else{$this->sync();return $this->message;}
     }
+    public function getDate(){
+        if(!is_null($this->date)){return $this->date;}
+        else{$this->sync();return $this->date;}
+    }
 
     //Persistence
     public function flush(){
@@ -91,6 +96,7 @@ class ChatMessage extends Persistence implements JsonSerializable{
                     $this->chatRoom = ChatRoom::build($row['chatRoom']);
                     $this->owner = User::build($row['owner']);
                     $this->message = $row['message'];
+                    $this->date = $row['date'];
                     $this->dirty = false;
                 }
             }
@@ -105,7 +111,7 @@ class ChatMessage extends Persistence implements JsonSerializable{
 
     //Serialization
     public function jsonSerialize(){
-        return array("id" => $this->getId(), "chatRoom" => $this->getChatRoom()->getId(), "owner" => $this->getOwner()->getId(), "message" => $this->getMessage());
+        return array("id" => $this->getId(), "chatRoom" => $this->getChatRoom()->getId(), "owner" => $this->getOwner()->getId(), "message" => $this->getMessage(), "date" => $this->getDate());
     }
 
     //Factory
@@ -120,7 +126,7 @@ class ChatMessage extends Persistence implements JsonSerializable{
         }
     }
 
-    public static function buildNew($chatRoom, $owner, $message){
+    public static function buildNew(&$chatRoom, &$owner, $message){
         $chatMessage = New ChatMessage();
         $chatMessage->setChatRoom($chatRoom);
         $chatMessage->setOwner($owner);

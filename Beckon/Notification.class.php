@@ -93,7 +93,7 @@ class Notification extends Persistence implements JsonSerializable{
     }
 
     public function delete(){
-        $this->q("delete from Beckon where id = {$this->id}");
+        $this->q("delete from Notification where id = {$this->id}");
         foreach ($this as $key => $value) {
             unset($this->$key);
         }
@@ -101,24 +101,27 @@ class Notification extends Persistence implements JsonSerializable{
 
     public function sync(){
         if(!is_null($this->id)){
-            $set = $this->q("select * from Beckon where id = {$this->id}");
+            $set = $this->q("select * from Notification where id = {$this->id}");
             if($set->rowCount() > 0){
                 foreach($set as $row){
                     $this->id = $row['id'];
                     $this->owner = User::build($row['owner']);
                     $this->objectClass = $row['objectClass'];
-                    if($this->objectClass == "Beckon"){
+                    if($row['objectClass'] == "Beckon"){
                         $this->object = Beckon::build($row['object']);
                     }
-                    elseif($this->objectClass == "Friend"){
+                    elseif($row['objectClass'] == "Friend"){
                         $this->object = Friend::build($row['object']);
+                    }
+                    elseif($row['objectClass'] == "ChatMessage"){
+                        $this->object = ChatMessage::build($row['object']);
                     }
                     $this->message = $row['message'];
                     $this->dirty = false;
                 }
             }
             else{
-                throw new Exception("Object does not exist");
+                throw new Exception("Notification with id ". $this->getId() ." does not exist");
             }
         }
         else{
@@ -128,7 +131,7 @@ class Notification extends Persistence implements JsonSerializable{
 
     //Serialization
     public function jsonSerialize(){
-        return array("owner" => $this->getOwner()->getId(), "objectClass" => $this->getObjectClass(), "object" => $this->getObject()->jsonSerialize(), "message" => $this->getMessage());//TODO add memberprintout
+        return array("owner" => $this->getOwner()->getId(), "objectClass" => $this->getObjectClass(), "object" => $this->getObject()->jsonSerialize(), "message" => $this->getMessage());
     }
 
     //Factory
@@ -143,7 +146,7 @@ class Notification extends Persistence implements JsonSerializable{
         }
     }
 
-    public static function buildNew($owner, $object, $message){
+    public static function buildNew(&$owner, $object, $message){
         $notification = New Notification();
         $notification->setOwner($owner);
         $notification->setObject($object);
@@ -167,6 +170,9 @@ class Notification extends Persistence implements JsonSerializable{
         }
         elseif($objectClass == "Friend"){
             $notification->object = Friend::build($objectId);
+        }
+        elseif($objectClass == "ChatMessage"){
+            $notification->object = ChatMessage::build($objectId);
         }
         $notification->message = $message;
         self::cachePut("Notification", $id, $notification);

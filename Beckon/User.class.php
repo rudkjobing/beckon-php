@@ -154,7 +154,7 @@ class User extends Persistence implements JsonSerializable{
                 }
             }
             else{
-                throw new Exception("Object does not exist");
+                throw new Exception(__FUNCTION__ . " Object does not exist");
             }
         }
         else{
@@ -168,7 +168,7 @@ class User extends Persistence implements JsonSerializable{
     }
 
     public function getJsonSerializedTree() {
-        return array("firstName" => $this->getFirstName(), "lastName" => $this->getLastName(), "emailAddress" => $this->getEmailAddress(), "devices" => $this->getDevices()->jsonSerialize(), "friends" => $this->getFriends()->jsonSerialize(), "beckons" => $this->getBeckons()->jsonSerialize(), "groups" => $this->getGroups()->jsonSerialize(), "notifications" => $this->getNotifications()->jsonSerialize(), "chatRooms" => $this->getChatRooms()->jsonSerialize());
+        return array("id" => $this->getId(), "firstName" => $this->getFirstName(), "lastName" => $this->getLastName(), "emailAddress" => $this->getEmailAddress(), "devices" => $this->getDevices()->jsonSerialize(), "friends" => $this->getFriends()->jsonSerialize(), "beckons" => $this->getBeckons()->jsonSerialize(), "groups" => $this->getGroups()->jsonSerialize(), "notifications" => $this->getNotifications()->jsonSerialize(), "chatRooms" => $this->getChatRooms()->jsonSerialize());
     }
 
     //Factory

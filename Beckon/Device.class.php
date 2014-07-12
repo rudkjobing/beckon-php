@@ -127,7 +127,7 @@ class Device extends Persistence implements JsonSerializable{
         }
     }
 
-    public static function buildNew($owner, $type, $notificationKey){
+    public static function buildNew(&$owner, $type, $notificationKey){
         $device = New Device();
         $device->setOwner($owner);
         $device->setType($type);

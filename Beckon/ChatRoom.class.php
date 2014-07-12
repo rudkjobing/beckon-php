@@ -88,7 +88,7 @@ class ChatRoom extends Persistence implements JsonSerializable{
             }
         }
         else{
-            throw New Exception("Unable to sync unknown object instance");
+            throw New Exception("ChatRoom with id " . $this->getId() . " does not exist");
         }
     }
 
@@ -109,7 +109,7 @@ class ChatRoom extends Persistence implements JsonSerializable{
         }
     }
 
-    public static function buildNew($owner){
+    public static function buildNew(&$owner){
         $chatRoom = New ChatRoom();
         $chatRoom->setOwner($owner);
         try{
