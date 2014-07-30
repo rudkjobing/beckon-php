@@ -25,7 +25,7 @@ class NotificationService{
     private static $passphrase = 'Tw0k1252';
 
     function __construct() {
-        self::$query = self::getConnection()->prepare("select Notification.id, type, notificationKey, message, objectClass, object, Notification.owner _owner, (select count(*) from Notification where owner = _owner) badge from Notification inner join Device on Notification.owner = Device.owner where status = 'PENDING'");
+        self::$query = self::getConnection()->prepare("select Notification.id, type, notificationKey, message, updateType, destinationId, Notification.owner _owner from Notification inner join Device on Notification.owner = Device.owner where status = 'PENDING'");
         self::$delievered = self::getConnection()->prepare("update Notification set status = 'Delivered' where id = :id");
     }
 
@@ -46,8 +46,8 @@ class NotificationService{
         $i = 0;
         foreach($notifications as $notification){
             if($notification['type'] == "APPLEIOS"){
-                $body['aps'] = array('alert' => $notification['message'], 'sound' => 'default', 'badge' => $notification['badge']);
-                $body['prm'] = array("nid" => $notification['id']);
+                $body['aps'] = array('alert' => $notification['message'], 'sound' => 'default', 'badge' => 1);
+                $body['prm'] = array("ut" => $notification['updateType'], "did" => $notification['destinationId']);
                 $payload = json_encode($body);
                 $msg = chr(0) . pack('n', 32) . pack('H*', $notification['notificationKey']) . pack('n', strlen($payload)) . $payload;
                 $result = fwrite($fp, $msg, strlen($msg));
