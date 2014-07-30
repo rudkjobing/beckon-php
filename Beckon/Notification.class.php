@@ -98,7 +98,6 @@ class Notification extends Persistence implements JsonSerializable{
     //Persistence
     public function flush(){
         if($this->dirty){
-            if(is_null($this->object) || is_null($this->owner)){throw new Exception("Object contains empty fields");}
             if(is_null($this->id)){
                 try{
                     $objectClass = get_class($this->object);
