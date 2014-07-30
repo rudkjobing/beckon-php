@@ -17,9 +17,11 @@ class Notification extends Persistence implements JsonSerializable{
     //Properties
     private $id = null;
     private $owner = null;//User
-    private $objectClass = null;
-    private $object = null;
+//    private $objectClass = null;
+//    private $object = null;
     private $message = null;
+    private $updateType = null;
+    private $destinationId = null;
 
     //Setters
     protected function setOwner(&$owner){
@@ -29,23 +31,35 @@ class Notification extends Persistence implements JsonSerializable{
         }
     }
 
-    public function setObjectClass($objectClass){
-        if($this->objectClass != $objectClass){
-            $this->objectClass = $objectClass;
-            $this->dirty = true;
-        }
-    }
-
-    public function setObject(&$object){
-        if($this->object != $object){
-            $this->object = $object;
-            $this->dirty = true;
-        }
-    }
+//    public function setObjectClass($objectClass){
+//        if($this->objectClass != $objectClass){
+//            $this->objectClass = $objectClass;
+//            $this->dirty = true;
+//        }
+//    }
+//
+//    public function setObject(&$object){
+//        if($this->object != $object){
+//            $this->object = $object;
+//            $this->dirty = true;
+//        }
+//    }
 
     public function setMessage($message){
         if($this->message != $message){
             $this->message = $message;
+            $this->dirty = true;
+        }
+    }
+    public function setUpdateType($updateType){
+        if($this->updateType != $updateType){
+            $this->updateType = $updateType;
+            $this->dirty = true;
+        }
+    }
+    public function setDestinationId($destinationId){
+        if($this->destinationId != $destinationId){
+            $this->destinationId = $destinationId;
             $this->dirty = true;
         }
     }
@@ -59,18 +73,27 @@ class Notification extends Persistence implements JsonSerializable{
         if(!is_null($this->owner)){return $this->owner;}
         else{$this->sync();return $this->owner;}
     }
-    public function getObjectClass(){
-        if(!is_null($this->objectClass)){return $this->objectClass;}
-        else{$this->sync();return $this->objectClass;}
-    }
-    public function getObject(){
-        if(!is_null($this->object)){return $this->object;}
-        else{$this->sync();return $this->object;}
-    }
+//    public function getObjectClass(){
+//        if(!is_null($this->objectClass)){return $this->objectClass;}
+//        else{$this->sync();return $this->objectClass;}
+//    }
+//    public function getObject(){
+//        if(!is_null($this->object)){return $this->object;}
+//        else{$this->sync();return $this->object;}
+//    }
     public function getMessage(){
         if(!is_null($this->message)){return $this->message;}
         else{$this->sync();return $this->message;}
     }
+    public function getUpdateType(){
+        if(!is_null($this->updateType)){return $this->updateType;}
+        else{$this->sync();return $this->updateType;}
+    }
+    public function getDestinationId(){
+        if(!is_null($this->destinationId)){return $this->destinationId;}
+        else{$this->sync();return $this->destinationId;}
+    }
+
 
     //Persistence
     public function flush(){
@@ -79,8 +102,8 @@ class Notification extends Persistence implements JsonSerializable{
             if(is_null($this->id)){
                 try{
                     $objectClass = get_class($this->object);
-                    $stmt = self::getConnection()->prepare("insert into Notification (owner, objectClass, object, message) values (:owner, :objectClass, :object, :message)");
-                    $stmt->execute(array("owner" => $this->getOwner()->getId(), "objectClass" => $objectClass, "object" => $this->getObject()->getId(), "message" => $this->getMessage()));
+                    $stmt = self::getConnection()->prepare("insert into Notification (owner, updateType, destinationId, message) values (:owner, :updateType, :destinationId, :message)");
+                    $stmt->execute(array("owner" => $this->getOwner()->getId(), "updateType" => $this->updateType, "destinationId" => $this->destinationId, "message" => $this->getMessage()));
                     $this->id = self::$connection->lastInsertId();
                     self::cachePut("Notification", $this->getId(), $this);
                     $this->dirty = false;
@@ -106,16 +129,8 @@ class Notification extends Persistence implements JsonSerializable{
                 foreach($set as $row){
                     $this->id = $row['id'];
                     $this->owner = User::build($row['owner']);
-                    $this->objectClass = $row['objectClass'];
-                    if($row['objectClass'] == "Beckon"){
-                        $this->object = Beckon::build($row['object']);
-                    }
-                    elseif($row['objectClass'] == "Friend"){
-                        $this->object = Friend::build($row['object']);
-                    }
-                    elseif($row['objectClass'] == "ChatMessage"){
-                        $this->object = ChatMessage::build($row['object']);
-                    }
+                    $this->updateType = $row['updateType'];
+                    $this->destinationId = $row['destinationId'];
                     $this->message = $row['message'];
                     $this->dirty = false;
                 }
@@ -131,7 +146,7 @@ class Notification extends Persistence implements JsonSerializable{
 
     //Serialization
     public function jsonSerialize(){
-        return array("owner" => $this->getOwner()->getId(), "objectClass" => $this->getObjectClass(), "object" => $this->getObject()->jsonSerialize(), "message" => $this->getMessage());
+        return array("owner" => $this->getOwner()->getId(), "updateType" => $this->getUpdateType(), "destinationId" => $this->getDestinationId(), "message" => $this->getMessage());
     }
 
     //Factory
@@ -146,11 +161,11 @@ class Notification extends Persistence implements JsonSerializable{
         }
     }
 
-    public static function buildNew(&$owner, $object, $message){
+    public static function buildNew(&$owner, $updateType, $destinationId, $message){
         $notification = New Notification();
         $notification->setOwner($owner);
-        $notification->setObject($object);
-        $notification->setObjectClass(get_class($object));
+        $notification->setUpdateType($updateType);
+        $notification->setDestinationId($destinationId);
         $notification->setMessage($message);
         try{
             $notification->flush();
@@ -161,19 +176,11 @@ class Notification extends Persistence implements JsonSerializable{
         return $notification;
     }
 
-    public static function buildExisting($id, $ownerId, $objectClass, $objectId, $message){
+    public static function buildExisting($id, $ownerId, $updateType, $destinationId, $message){
         $notification = self::build($id);
         $notification->owner = User::build($ownerId);
-        $notification->objectClass = $objectClass;
-        if($objectClass == "Beckon"){
-            $notification->object = Beckon::build($objectId);
-        }
-        elseif($objectClass == "Friend"){
-            $notification->object = Friend::build($objectId);
-        }
-        elseif($objectClass == "ChatMessage"){
-            $notification->object = ChatMessage::build($objectId);
-        }
+        $notification->updateType = $updateType;
+        $notification->destinationId = $destinationId;
         $notification->message = $message;
         self::cachePut("Notification", $id, $notification);
         return $notification;

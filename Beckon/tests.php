@@ -23,17 +23,25 @@ include_once "DeviceManager.class.php";
 
 try{
     //$cookie = UserManager::signUp("Bertil", "Andersen", "bertil@gmail.com", "test1234");/*
-    $cookie2 = UserManager::signUp("Steffen", "Rudkjøbing", "steffen@gmail.com", "test1234");
+    //$cookie2 = UserManager::signUp("Steffen", "Rudkjøbing", "steffen@gmail.com", "test1234");
 
     //$bertil = UserManager::eatCookie(15, "05aacbea048f11056adfb52ecc680acba0a97a51");
-   // $steffen = UserManager::eatCookie(16, "74c99989d13cf1ce7d64b75a5695dcd0179013b3");
+    //$steffen = UserManager::eatCookie(10, "e3e1e81c14079ab5c2b378318650d4a9fae7f44d");
 
-    //$res = UserManager::signIn("slyngel@gmail.com", "test1234");
+    $user = User::build(1);
+    $beckons = $user->getBeckons();
 
-    $res = UserManager::eatCookie(4, "e257c39f059d908cf0b58786cfe7250eadeb3952");
+    //$beckons->sync(3);
+    //echo json_encode($beckons->jsonSerialize());
+
+    //$res = UserManager::signIn("slyngel@gmail.com", "");
+
+    //echo json_encode(NotificationManager::getNotification($steffen, "39"));
+
+    //$res = UserManager::eatCookie(4, "e257c39f059d908cf0b58786cfe7250eadeb3952");
     //User::buildNew("Steffen", "R", "asd", "asd");
     //$notification = NotificationManager::getNotification($res, 1);
-    BeckonManager::addBeckon($res, "Kejser2", "2014-07-07 15:57:12 +0000", "2014-07-07 15:57:12 +0000", array(), array(2, 4));
+    //BeckonManager::addBeckon($res, "Kejser2", "2014-07-07 15:57:12 +0000", "2014-07-07 15:57:12 +0000", array(), array(2, 4));
 
     //echo json_encode($res->getJsonSerializedTree());
     //echo json_encode($notification);

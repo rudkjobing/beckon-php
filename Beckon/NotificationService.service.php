@@ -5,10 +5,10 @@ $service = new NotificationService();
 while(true){
     try{
         $i = $service->dispatchNotifications();
-        echo "Dispatched {$i} notifications\n";
+        //echo "Dispatched {$i} notifications\n";
     }
     catch(Exception $e){
-        echo "{$e}\n";
+        //echo "{$e}\n";
     }
     sleep(1);
 }

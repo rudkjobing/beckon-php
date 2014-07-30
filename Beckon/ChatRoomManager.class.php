@@ -13,7 +13,7 @@ class ChatRoomManager {
             $messages = $chatRoom->getMessages()->getIterator();
             $result = array();
             foreach($messages as $message){
-                $msg = array("id" => $message->getId(), "message" => $message->getMessage(), "date" => $message->getDate());
+                $msg = array("id" => $message->getId(), "from" => $message->getOwner()->getFirstName() . " " . $message->getOwner()->getLastName(), "message" => $message->getMessage(), "date" => $message->getDate());
                 if($message->getOwner() == $user){
                     $msg['fromMe'] = true;
                 }
@@ -36,7 +36,7 @@ class ChatRoomManager {
             $members = $chatRoom->getMembers()->getIterator();
             foreach($members as $member){
                 if($member->getUser() != $user){
-                    Notification::buildNew($member->getUser(), $chatMessage, $message);
+                    Notification::buildNew($member->getUser(), "ChatRoom", $chatMessage->getId(), $message);
                 }
             }
             return array("status" => 1, "message" => "Message recieved", "payload" => "");

@@ -94,9 +94,9 @@ class User extends Persistence implements JsonSerializable{
         if(!is_null($this->groups)){return $this->groups;}
         else{$this->groups = new GroupCollection($this->id);return $this->groups;}
     }
-    public function getBeckons(){
+    public function getBeckons($newest = 0){
         if(!is_null($this->beckons)){return $this->beckons;}
-        else{$this->beckons = new BeckonCollection($this->id);return $this->beckons;}
+        else{$this->beckons = new BeckonCollection($this->id, $newest);return $this->beckons;}
     }
     public function getNotifications(){
         if(!is_null($this->notifications)){return $this->notifications;}

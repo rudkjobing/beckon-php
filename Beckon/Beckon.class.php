@@ -148,7 +148,7 @@ class Beckon extends Persistence implements JsonSerializable{
 
     //Serialization
     public function jsonSerialize(){
-        return array("id" => $this->getId(), "owner" => $this->getOwner()->getId(), "title" => $this->getTitle(), "begins" => $this->getBegins(), "ends" => $this->getEnds(), "members" => $this->getMembers()->jsonSerialize(), "chatRoom" => $this->getChatRoom()->jsonSerialize());
+        return array("id" => $this->getId(), "owner" => $this->getOwner()->getId(), "title" => $this->getTitle(), "begins" => $this->getBegins(), "ends" => $this->getEnds()/*, "members" => $this->getMembers()->jsonSerialize()*/, "chatRoom" => $this->getChatRoom()->jsonSerialize());
     }
 
     //Factory

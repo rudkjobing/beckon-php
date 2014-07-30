@@ -11,10 +11,10 @@ class BeckonCollection extends Persistence implements JsonSerializable,Collectio
     private $id = null;
     private $entities;
 
-    public function __construct($id = null){
+    public function __construct($id = null, $newest = 0){
         $this->id = $id;
         $this->entities = array();
-        $this->sync();
+        $this->sync($newest);
     }
 
     public function getItem($key){
@@ -44,9 +44,9 @@ class BeckonCollection extends Persistence implements JsonSerializable,Collectio
         $this->entities[$key]->delete();
     }
 
-    public function sync(){
+    public function sync($id = 0){
         if(!is_null($this->id)){
-            foreach($this->q("select Beckon.id, Beckon.title, Beckon.begins, Beckon.ends, Beckon.owner, Beckon.id, Beckon.chatRoom from BeckonMember inner join Beckon on BeckonMember.beckon = Beckon.id where BeckonMember.user = {$this->id}") as $beckon){
+            foreach($this->q("select Beckon.id, Beckon.title, Beckon.begins, Beckon.ends, Beckon.owner, Beckon.id, Beckon.chatRoom from BeckonMember inner join Beckon on BeckonMember.beckon = Beckon.id where BeckonMember.user = {$this->id} and Beckon.id > {$id}") as $beckon){
                 $this->addItem(Beckon::buildExisting($beckon['id'], $beckon['title'], $beckon['begins'], $beckon['ends'], $beckon['owner'], $beckon['chatRoom']), $beckon['id']);
             }
         }

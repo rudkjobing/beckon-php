@@ -19,7 +19,7 @@ class ChatRoom extends Persistence implements JsonSerializable{
 
     //Properties
     private $id = null;
-    private $owner = null;//User
+    private $owner = null;
     private $members = null;
     private $messages = null;
 
@@ -94,7 +94,7 @@ class ChatRoom extends Persistence implements JsonSerializable{
 
     //Serialization
     public function jsonSerialize(){
-        return array("id" => $this->getId(), "owner" => $this->getOwner()->getId(), "members" => $this->getMembers()->jsonSerialize(), "messages" => $this->getMessages()->jsonSerialize());
+        return array("id" => $this->getId()/*, "owner" => $this->getOwner()->getId(), "members" => $this->getMembers()->jsonSerialize(), "messages" => $this->getMessages()->jsonSerialize()*/);
     }
 
     //Factory

@@ -47,7 +47,7 @@ class NotificationCollection extends Persistence implements JsonSerializable,Col
     public function sync(){
         if(!is_null($this->id)){
             foreach($this->q("select * from Notification where owner = {$this->id}") as $notification){
-                $this->addItem(Notification::buildExisting($notification['id'],  $notification['owner'], $notification['objectClass'], $notification['object'], $notification['message']), $notification['id']);
+                $this->addItem(Notification::buildExisting($notification['id'],  $notification['owner'], $notification['updateType'], $notification['destinationId'], $notification['message']), $notification['id']);
             }
         }
     }
