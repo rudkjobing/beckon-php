@@ -61,6 +61,9 @@ include_once "ChatMessage.class.php";
         elseif($_SERVER['HTTP_USER'] == "signIn"){
             $response = UserManager::signIn($client->email, $client->password);
         }
+        elseif($_SERVER['HTTP_USER'] == "signOut"){
+            $response = UserManager::signOut($client->cookie->id, $client->cookie->cookie);
+        }
     }
     elseif(isset($_SERVER['HTTP_NOTIFICATION'])){
         if($_SERVER['HTTP_NOTIFICATION'] == "getNotification"){
@@ -80,7 +83,7 @@ include_once "ChatMessage.class.php";
             $response = BeckonManager::getBeckons($user, $client->newestBeckonId);
         }
         elseif($_SERVER['HTTP_BECKON'] == "addBeckon"){
-            $response = BeckonManager::addBeckon($user, $client->beckon->title, $client->beckon->begins, $client->beckon->ends, array(), $client->beckon->friends);
+            $response = BeckonManager::addBeckon($user, $client->beckon->title, $client->beckon->begins, $client->beckon->ends, array(), $client->beckon->location->latitude, $client->beckon->location->longitude, $client->beckon->friends);
         }
     }
     elseif(isset($_SERVER['HTTP_FRIEND'])){

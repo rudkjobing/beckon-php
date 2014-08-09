@@ -39,14 +39,25 @@ class UserManager {
         }
     }
 
-    //Returns the entire data tree of the user
-    public static function getState($user){
+//    public static function getState($user){
+//        try{
+//            return array("status" => 1, "message" => "State", "payload" => array("user" => $user->getJsonSerializedTree()));
+//        }
+//        catch(Exception $e){
+//            return array("status" => 0, "message" => $e->getMessage(), "payload" => "");
+//        }
+//    }
+
+    public static function signOut($cookieId, $cookie){
         try{
-            return array("status" => 1, "message" => "State", "payload" => array("user" => $user->getJsonSerializedTree()));
+            $c = Cookie::build($cookieId, $cookie);
+            $c->delete();
+            return array("status" => 1, "message" => "User signed out", "payload" => "");
         }
         catch(Exception $e){
             return array("status" => 0, "message" => $e->getMessage(), "payload" => "");
         }
     }
+
 
 } 

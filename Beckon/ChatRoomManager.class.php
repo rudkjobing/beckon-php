@@ -36,7 +36,7 @@ class ChatRoomManager {
             $members = $chatRoom->getMembers()->getIterator();
             foreach($members as $member){
                 if($member->getUser() != $user){
-                    Notification::buildNew($member->getUser(), "ChatRoom", $chatMessage->getId(), $message);
+                    Notification::buildNew($member->getUser(), "ChatRoom", $chatRoomId, $message);
                 }
             }
             return array("status" => 1, "message" => "Message recieved", "payload" => "");

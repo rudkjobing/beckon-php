@@ -47,7 +47,7 @@ class BeckonMemberCollection extends Persistence implements JsonSerializable,Col
     public function sync(){
         if(!is_null($this->id)){
             foreach($this->q("select * from BeckonMember where beckon = {$this->id}") as $beckonMember){
-                $this->addItem(BeckonMember::buildExisting($beckonMember['id'], $beckonMember['beckon'], $beckonMember['user']), $beckonMember['id']);
+                $this->addItem(BeckonMember::buildExisting($beckonMember['id'], $beckonMember['beckon'], $beckonMember['user'], $beckonMember['status']), $beckonMember['id']);
             }
         }
     }

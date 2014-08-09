@@ -18,6 +18,7 @@ class BeckonMember extends Persistence implements JsonSerializable{
     private $id = null;
     private $user = null;
     private $beckon = null;
+    private $status = null;
 
     //Setters
     protected function setUser(&$user){
@@ -30,6 +31,13 @@ class BeckonMember extends Persistence implements JsonSerializable{
     public function setBeckon(&$beckon){
         if($this->beckon != $beckon){
             $this->beckon = $beckon;
+            $this->dirty = true;
+        }
+    }
+
+    public function setStatus($status){
+        if($this->status != $status){
+            $this->status = $status;
             $this->dirty = true;
         }
     }
@@ -47,17 +55,21 @@ class BeckonMember extends Persistence implements JsonSerializable{
         if(!is_null($this->beckon)){return $this->beckon;}
         else{$this->sync();return $this->beckon;}
     }
+    public function getStatus(){
+        if(!is_null($this->status)){return $this->status;}
+        else{$this->sync();return $this->status;}
+    }
 
     //Persistence
     public function flush(){
         if($this->dirty){
             if(!is_null($this->id)){
-                $this->q("update BeckonMember set user = {$this->getUser()->getId()}, beckon = {$this->getBeckon()->getId()} where id = {$this->getId()}");
+                $this->q("update BeckonMember set user = {$this->getUser()->getId()}, beckon = {$this->getBeckon()->getId()}, status = '{$this->getStatus()}' where id = {$this->getId()}");
                 $this->dirty = false;
             }
             elseif(is_null($this->id)){
                 try{
-                    $this->q("insert into BeckonMember (user, beckon) values ({$this->getUser()->getId()}, {$this->getBeckon()->getId()})");
+                    $this->q("insert into BeckonMember (user, beckon, status) values ({$this->getUser()->getId()}, {$this->getBeckon()->getId()}, '{$this->getStatus()}')");
                     $this->id = self::$connection->lastInsertId();
                     self::cachePut("BeckonMember", $this->getId(), $this);
                     $this->dirty = false;
@@ -84,6 +96,7 @@ class BeckonMember extends Persistence implements JsonSerializable{
                     $this->id = $row['id'];
                     $this->user = User::build($row['user']);
                     $this->beckon = Beckon::build($row['beckon']);
+                    $this->status = $row['status'];
                     $this->dirty = false;
                 }
             }
@@ -113,10 +126,11 @@ class BeckonMember extends Persistence implements JsonSerializable{
         }
     }
 
-    public static function buildNew(&$beckon, &$user){
+    public static function buildNew(&$beckon, &$user, $status){
         $beckonMember = New BeckonMember();
         $beckonMember->setBeckon($beckon);
         $beckonMember->setUser($user);
+        $beckonMember->setStatus($status);
         try{
             $beckonMember->flush();
         }
@@ -126,7 +140,7 @@ class BeckonMember extends Persistence implements JsonSerializable{
         return $beckonMember;
     }
 
-    public static function buildExisting($id, $beckonId, $userId){
+    public static function buildExisting($id, $beckonId, $userId, $status){
         $beckonMember = New BeckonMember($id);
         self::cachePut("BeckonMember", $id, $beckonMember);
         try{
@@ -141,6 +155,7 @@ class BeckonMember extends Persistence implements JsonSerializable{
         catch(Exception $e){
             $beckonMember->setUser(User::build($userId));
         }
+        $beckonMember->setStatus($status);
         return $beckonMember;
     }
 }

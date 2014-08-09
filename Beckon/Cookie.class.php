@@ -103,7 +103,7 @@ class Cookie extends Persistence implements JsonSerializable{
 
     //Serialization
     public function jsonSerialize(){
-        return array("id" => $this->getId(), "owner" => $this->getOwner()->jsonSerialize(), "cookie" => $this->getCookie());
+        return array("id" => $this->getId(), "cookie" => $this->getCookie());
     }
 
     //Factory
