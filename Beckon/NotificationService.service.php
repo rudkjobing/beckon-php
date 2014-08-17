@@ -15,7 +15,7 @@ while(true){
 
 class NotificationService{
 
-    private static $SERVER_IP = "95.85.59.211";
+    private static $SERVER_IP = "178.62.175.104";
     private static $USERNAME = "app";
     private static $PASSWORD = "AA2D43901A3D9F8C5730518DF92F6F0D";
     private static $DATABASE = "Beckon";
@@ -47,7 +47,7 @@ class NotificationService{
         foreach($notifications as $notification){
             if($notification['type'] == "APPLEIOS"){
                 $body['aps'] = array('alert' => $notification['message'], 'sound' => 'default', 'badge' => 1);
-                $body['prm'] = array("ut" => $notification['updateType'], "did" => $notification['destinationId']);
+                $body['prm'] = array('ut' => $notification['updateType'], 'did' => $notification['destinationId']);
                 $payload = json_encode($body);
                 $msg = chr(0) . pack('n', 32) . pack('H*', $notification['notificationKey']) . pack('n', strlen($payload)) . $payload;
                 $result = fwrite($fp, $msg, strlen($msg));

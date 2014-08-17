@@ -110,7 +110,7 @@ class Group extends Persistence implements JsonSerializable{
 
     //Serialization
     public function jsonSerialize(){
-        return array("id" => $this->getId(), "owner" => $this->getOwner()->jsonSerialize(), "name" => $this->getName(), "members" => $this->getMembers()->jsonSerialize());
+        return array("id" => $this->getId(), "name" => $this->getName());
     }
 
     public static function build($id){

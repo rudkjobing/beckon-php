@@ -25,12 +25,12 @@ class BeckonManager {
             }
             //$users = array_unique($users);
             foreach($users as $user){
-                $beckonMember = BeckonMember::buildNew($beckon, $user, "PENDING");
-                $chatRoomMember = ChatRoomMember::buildNew($chatRoom,$user);
+                BeckonMember::buildNew($beckon, $user, "PENDING");
+                ChatRoomMember::buildNew($chatRoom,$user);
                 Notification::buildNew($user, "Beckon", 0, $creator->getFirstName() . " Beckons you");
             }
             BeckonMember::buildNew($beckon, $creator, "ACCEPTED");
-            $chatRoomMember = ChatRoomMember::buildNew($chatRoom,$creator);
+            ChatRoomMember::buildNew($chatRoom,$creator);
 
             return array("status" => 1, "message" => "Beckon created", "payload" => array("beckon"=> $beckon->jsonSerialize()));
         }
@@ -42,7 +42,7 @@ class BeckonManager {
     public static function getBeckons(User $user, $id = 0){
         try{
             $beckons = $user->getBeckons();
-            return array("status" => 1, "message" => "Beckons fetched æøå", "payload" => array("beckons" => $beckons->jsonSerialize()));
+            return array("status" => 1, "message" => "Beckons fetched", "payload" => array("beckons" => $beckons->jsonSerialize()));
         }
         catch(Exception $e){
             return array("status" => 0, "message" => $e->getMessage(), "payload" => "");
