@@ -158,4 +158,13 @@ class BeckonMember extends Persistence implements JsonSerializable{
         $beckonMember->setStatus($status);
         return $beckonMember;
     }
+
+    public static function buildFromUserAndBeckonId(User &$user, $beckonId){
+        $stmt = self::getConnection()->prepare("select * from BeckonMember where beckon = :beckon and user = :user");
+        $stmt->execute(array("beckon" => $beckonId, "user" => $user->getId()));
+        $set = $stmt->fetchAll();
+        if($stmt->rowCount() > 0){
+            return self::buildExisting($set['id'], $set['beckon'], $set['user'], $set['status']);
+        }
+    }
 }

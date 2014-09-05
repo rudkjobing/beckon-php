@@ -49,4 +49,32 @@ class BeckonManager {
         }
     }
 
+    public static function acceptBeckon(User $user, $beckonId){
+        try{
+            $beckon = Beckon::build($beckonId);
+            $beckonMember = BeckonMember::buildFromUserAndBeckonId($user, $beckonId);
+            $beckonMember->setStatus("ACCEPTED");
+            $beckonMember->flush();
+            Notification::buildNew($beckon->getOwner(), "beckon", $beckon->getId(), "{$user->getFirstName()} has accepted your invitation");
+            return array("status" => 1, "message" => "Beckon accepted", "payload" => "");
+        }
+        catch(Exception $e){
+            return array("status" => 0, "message" => $e->getMessage(), "payload" => "");
+        }
+    }
+
+    public static function rejectBeckon(User $user, $beckonId){
+        try{
+            $beckon = Beckon::build($beckonId);
+            $beckonMember = BeckonMember::buildFromUserAndBeckonId($user, $beckonId);
+            $beckonMember->setStatus("REJECTED");
+            $beckonMember->flush();
+            Notification::buildNew($beckon->getOwner(), "beckon", $beckon->getId(), "{$user->getFirstName()} has rejected your invitation");
+            return array("status" => 1, "message" => "Beckon rejected", "payload" => "");
+        }
+        catch(Exception $e){
+            return array("status" => 0, "message" => $e->getMessage(), "payload" => "");
+        }
+    }
+
 } 
