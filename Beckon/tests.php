@@ -30,7 +30,7 @@ try{
 
     $user = User::build(1);
     $beckons = $user->getBeckons();
-
+    $beckonMember = BeckonMember::buildFromUserAndBeckonId($user, 39);
     //$beckons->sync(3);
     //echo json_encode($beckons->jsonSerialize());
 

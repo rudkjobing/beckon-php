@@ -105,7 +105,7 @@ class BeckonMember extends Persistence implements JsonSerializable{
             }
         }
         else{
-            throw New Exception("Unable to sync unknown object instance");
+            throw New Exception("BeckonMember with id " . $this->getId() . " does not exist");
         }
     }
 
@@ -160,11 +160,13 @@ class BeckonMember extends Persistence implements JsonSerializable{
     }
 
     public static function buildFromUserAndBeckonId(User &$user, $beckonId){
-        $stmt = self::getConnection()->prepare("select * from BeckonMember where beckon = :beckon and user = :user");
+        $stmt = self::getConnection()->prepare("select * from BeckonMember where beckon = :beckon and `user` = :user");
         $stmt->execute(array("beckon" => $beckonId, "user" => $user->getId()));
         $set = $stmt->fetchAll();
         if($stmt->rowCount() > 0){
-            return self::buildExisting($set['id'], $set['beckon'], $set['user'], $set['status']);
+            foreach($set as $row){
+                return self::buildExisting($row['id'], $row['beckon'], $row['user'], $row['status']);
+            }
         }
     }
 }

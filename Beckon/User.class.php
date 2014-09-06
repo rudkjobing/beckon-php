@@ -158,7 +158,7 @@ class User extends Persistence implements JsonSerializable{
             }
         }
         else{
-            throw New Exception("Unable to sync unknown object instance");
+            throw New Exception("User with id " . $this->getId() . " does not exist");
         }
     }
 

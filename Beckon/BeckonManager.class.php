@@ -8,10 +8,10 @@
 
 class BeckonManager {
 
-    public static function addBeckon(User $creator, $title, $begins, $ends, $groups, $latitude, $longitude, $friends){
+    public static function addBeckon(User $creator, $title, $description, $begins, $ends, $groups, $latitude, $longitude, $friends){
         try{
             $chatRoom = ChatRoom::buildNew($creator);
-            $beckon = Beckon::buildNew($title, $creator, $begins, $ends, $latitude, $longitude, $chatRoom);
+            $beckon = Beckon::buildNew($title, $description, $creator, $begins, $ends, $latitude, $longitude, $chatRoom);
             $users = array();
             foreach($groups as $group){
                 $members = Group::build($group)->getMembers()->getIterator();
