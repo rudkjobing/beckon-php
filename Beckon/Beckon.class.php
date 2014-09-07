@@ -1,7 +1,7 @@
 <?php
 /**
  * Created by PhpStorm.
- * User: steffen
+ * User: Steffen Rudkjøbing
  * Date: 06/06/14
  * Time: 23:02
  */
