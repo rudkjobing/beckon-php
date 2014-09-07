@@ -105,13 +105,13 @@ class BeckonMember extends Persistence implements JsonSerializable{
             }
         }
         else{
-            throw New Exception("BeckonMember with id " . $this->getId() . " does not exist");
+            throw New Exception("BeckonMember has not yet been persisted");
         }
     }
 
     //Serialization
     public function jsonSerialize(){
-        return array("user" => $this->getUser()->getId(), "beckon" => $this->getBeckon()->getId());
+        return array("user" => $this->getUser()->getId(), "firstName" => $this->getUser()->getFirstName(), "lastName" => $this->getUser()->getLastName(), "status" => $this->getStatus(), "beckon" => $this->getBeckon()->getId());
     }
 
     //Factory

@@ -31,7 +31,8 @@ class BeckonManager {
             }
             BeckonMember::buildNew($beckon, $creator, "ACCEPTED");
             ChatRoomMember::buildNew($chatRoom,$creator);
-
+            $beckon->setInvited(count($users));
+            $beckon->flush();
             return array("status" => 1, "message" => "Beckon created", "payload" => array("beckon"=> $beckon->jsonSerialize()));
         }
         catch(Exception $e){
@@ -53,10 +54,26 @@ class BeckonManager {
         try{
             $beckon = Beckon::build($beckonId);
             $beckonMember = BeckonMember::buildFromUserAndBeckonId($user, $beckonId);
-            $beckonMember->setStatus("ACCEPTED");
-            $beckonMember->flush();
-            Notification::buildNew($beckon->getOwner(), "beckon", $beckon->getId(), "{$user->getFirstName()} has accepted your invitation");
-            return array("status" => 1, "message" => "Beckon accepted", "payload" => "");
+            if($beckonMember->getStatus() == "PENDING"){
+                $beckon->setAccepted($beckon->getAccepted() + 1);
+                $beckon->flush();
+                $beckonMember->setStatus("ACCEPTED");
+                $beckonMember->flush();
+                Notification::buildNew($beckon->getOwner(), "beckon", $beckon->getId(), "{$user->getFirstName()} has accepted your invitation");
+                return array("status" => 1, "message" => "Beckon accepted", "payload" => "");
+            }
+            elseif($beckonMember->getStatus() == "REJECTED"){
+                $beckon->setRejected($beckon->getRejected() - 1);
+                $beckon->setAccepted($beckon->getAccepted() + 1);
+                $beckon->flush();
+                $beckonMember->setStatus("ACCEPTED");
+                $beckonMember->flush();
+                Notification::buildNew($beckon->getOwner(), "beckon", $beckon->getId(), "{$user->getFirstName()} has accepted your invitation");
+                return array("status" => 1, "message" => "Beckon accepted", "payload" => "");
+            }
+            else{
+                return array("status" => 0, "message" => "Beckon already accepted", "payload" => "");
+            }
         }
         catch(Exception $e){
             return array("status" => 0, "message" => $e->getMessage(), "payload" => "");
@@ -67,10 +84,26 @@ class BeckonManager {
         try{
             $beckon = Beckon::build($beckonId);
             $beckonMember = BeckonMember::buildFromUserAndBeckonId($user, $beckonId);
-            $beckonMember->setStatus("REJECTED");
-            $beckonMember->flush();
-            Notification::buildNew($beckon->getOwner(), "beckon", $beckon->getId(), "{$user->getFirstName()} has rejected your invitation");
-            return array("status" => 1, "message" => "Beckon rejected", "payload" => "");
+            if($beckonMember->getStatus() == "PENDING"){
+                $beckon->setRejected($beckon->getRejected() + 1);
+                $beckon->flush();
+                $beckonMember->setStatus("REJECTED");
+                $beckonMember->flush();
+                Notification::buildNew($beckon->getOwner(), "beckon", $beckon->getId(), "{$user->getFirstName()} has rejected your invitation");
+                return array("status" => 1, "message" => "Beckon rejected", "payload" => "");
+            }
+            elseif($beckonMember->getStatus() == "ACCEPTED"){
+                $beckon->setAccepted($beckon->getAccepted() - 1);
+                $beckon->setRejected($beckon->getRejected() + 1);
+                $beckon->flush();
+                $beckonMember->setStatus("REJECTED");
+                $beckonMember->flush();
+                Notification::buildNew($beckon->getOwner(), "beckon", $beckon->getId(), "{$user->getFirstName()} has rejected your invitation");
+                return array("status" => 1, "message" => "Beckon rejected", "payload" => "");
+            }
+            else{
+                return array("status" => 0, "message" => "Beckon already rejected", "payload" => "");
+            }
         }
         catch(Exception $e){
             return array("status" => 0, "message" => $e->getMessage(), "payload" => "");

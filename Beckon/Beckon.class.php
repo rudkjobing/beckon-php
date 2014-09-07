@@ -27,6 +27,9 @@ class Beckon extends Persistence implements JsonSerializable{
     private $latitude = null;
     private $longitude = null;
     private $chatRoom = null;
+    private $invited = -1;
+    private $accepted = -1;
+    private $rejected = -1;
 
     //Setters
     protected function setOwner(&$owner){
@@ -85,6 +88,21 @@ class Beckon extends Persistence implements JsonSerializable{
         }
     }
 
+    public function setInvited($invited){
+        $this->invited = $invited;
+        $this->dirty = true;
+    }
+
+    public function setAccepted($accepted){
+        $this->accepted = $accepted;
+        $this->dirty = true;
+    }
+
+    public function setRejected($rejected){
+        $this->rejected = $rejected;
+        $this->dirty = true;
+    }
+
     //Lazy Getters
     public function getId(){
         if(!is_null($this->id)){return $this->id;}
@@ -126,6 +144,18 @@ class Beckon extends Persistence implements JsonSerializable{
         if(!is_null($this->chatRoom)){return $this->chatRoom;}
         else{$this->sync();return $this->chatRoom;}
     }
+    public function getInvited(){
+        if($this->invited >= 0){return $this->invited;}
+        else{$this->sync();return $this->invited;}
+    }
+    public function getAccepted(){
+        if($this->accepted >= 0){return $this->accepted;}
+        else{$this->sync();return $this->accepted;}
+    }
+    public function getRejected(){
+        if($this->rejected >= 0){return $this->rejected;}
+        else{$this->sync();return $this->rejected;}
+    }
 
 
     //Persistence
@@ -133,14 +163,37 @@ class Beckon extends Persistence implements JsonSerializable{
         if($this->dirty){
             if($this->title == ""){throw new Exception("Object contains empty fields");}
             elseif(!is_null($this->id)){
-                $stmt = self::getConnection()->prepare("update Beckon set owner = :owner, title = :title, description = :description, begins = :begins, ends = :ends, latitude = :latitude, longitude = :longitude, chatRoom = :chatRoom where id = :id");
-                $stmt->execute(array("title" => $this->getTitle(), "description" => $this->getDescription(), "owner" => $this->getOwner()->getId(), "begins" => $this->getBegins(), "ends" => $this->getEnds(), "latitude" => $this->getLatitude(), "longitude" => $this->getLongtitude(), "chatRoom" => $this->getChatRoom()->getId(), "id" => $this->getId()));
+                $stmt = self::getConnection()->prepare("update Beckon set owner = :owner, title = :title, description = :description, begins = :begins, ends = :ends, latitude = :latitude, longitude = :longitude, chatRoom = :chatRoom, invited = :invited, accepted = :accepted, rejected = :rejected where id = :id");
+                $stmt->execute(array(
+                    "title" => $this->getTitle(),
+                    "description" => $this->getDescription(),
+                    "owner" => $this->getOwner()->getId(),
+                    "begins" => $this->getBegins(),
+                    "ends" => $this->getEnds(),
+                    "latitude" => $this->getLatitude(),
+                    "longitude" => $this->getLongtitude(),
+                    "chatRoom" => $this->getChatRoom()->getId(),
+                    "invited" => $this->getInvited(),
+                    "accepted" => $this->getAccepted(),
+                    "rejected" => $this->getRejected(),
+                    "id" => $this->getId()));
                 $this->dirty = false;
             }
             elseif(is_null($this->id)){
                 try{
-                    $stmt = self::getConnection()->prepare("insert into Beckon (title, description, owner, begins, ends, latitude, longitude, chatRoom) values (:title, :description, :owner, :begins, :ends, :latitude, :longitude, :chatRoom)");
-                    $stmt->execute(array("title" => $this->getTitle(), "description" => $this->getDescription(), "owner" => $this->getOwner()->getId(), "begins" => $this->getBegins(), "ends" => $this->getEnds(), "latitude" => $this->getLatitude(), "longitude" => $this->getLongtitude(), "chatRoom" => $this->getChatRoom()->getId()));
+                    $stmt = self::getConnection()->prepare("insert into Beckon (title, description, owner, begins, ends, latitude, longitude, chatRoom, invited, accepted, rejected) values (:title, :description, :owner, :begins, :ends, :latitude, :longitude, :chatRoom, :invited, :accepted, :rejected)");
+                    $stmt->execute(array(
+                        "title" => $this->getTitle(),
+                        "description" => $this->getDescription(),
+                        "owner" => $this->getOwner()->getId(),
+                        "begins" => $this->getBegins(),
+                        "ends" => $this->getEnds(),
+                        "latitude" => $this->getLatitude(),
+                        "longitude" => $this->getLongtitude(),
+                        "chatRoom" => $this->getChatRoom()->getId(),
+                        "invited" => $this->invited,
+                        "accepted" => $this->accepted,
+                        "rejected" => $this->rejected));
                     $this->id = self::$connection->lastInsertId();
                     self::cachePut("Beckon", $this->getId(), $this);
                     $this->dirty = false;
@@ -173,6 +226,9 @@ class Beckon extends Persistence implements JsonSerializable{
                     $this->latitude = $row['latitude'];
                     $this->longitude = $row['longitude'];
                     $this->chatRoom = ChatRoom::build($row['chatRoom']);
+                    $this->invited = $row['invited'];
+                    $this->accepted = $row['accepted'];
+                    $this->rejected = $row['rejected'];
                     $this->dirty = false;
                 }
             }
@@ -181,13 +237,13 @@ class Beckon extends Persistence implements JsonSerializable{
             }
         }
         else{
-            throw New Exception("Beckon with id is null");
+            throw New Exception("Beckon has not yet been persisted");
         }
     }
 
     //Serialization
     public function jsonSerialize(){
-        return array("id" => $this->getId(), "owner" => $this->getOwner()->getId(), "title" => $this->getTitle(), "description" => $this->getDescription(), "begins" => $this->getBegins(), "ends" => $this->getEnds(), "latitude" => $this->getLatitude(), "longitude" => $this->getLongtitude(), "chatRoom" => $this->getChatRoom()->getId());
+        return array("id" => $this->getId(), "owner" => $this->getOwner()->getId(), "title" => $this->getTitle(), "description" => $this->getDescription(), "begins" => $this->getBegins(), "ends" => $this->getEnds(), "latitude" => $this->getLatitude(), "longitude" => $this->getLongtitude(), "chatRoom" => $this->getChatRoom()->getId(), "members" => $this->getMembers()->jsonSerialize());
     }
 
     //Factory
@@ -212,6 +268,9 @@ class Beckon extends Persistence implements JsonSerializable{
         $beckon->setLatitude($latitude);
         $beckon->setLongtitude($longitude);
         $beckon->setChatRoom($chatRoom);
+        $beckon->setInvited(0);
+        $beckon->setAccepted(1);
+        $beckon->setRejected(0);
         try{
             $beckon->flush();
         }
@@ -221,7 +280,7 @@ class Beckon extends Persistence implements JsonSerializable{
         return $beckon;
     }
 
-    public static function buildExisting($id, $title, $description, $begins, $ends, $ownerId, $latitude, $longitude,  $chatRoomId){
+    public static function buildExisting($id, $title, $description, $begins, $ends, $ownerId, $latitude, $longitude, $chatRoomId, $invited, $accepted, $rejected){
         $beckon = self::build($id);
         $beckon->title = $title;
         $beckon->description = $description;
@@ -231,6 +290,9 @@ class Beckon extends Persistence implements JsonSerializable{
         $beckon->latitude = $latitude;
         $beckon->longitude = $longitude;
         $beckon->chatRoom = ChatRoom::build($chatRoomId);
+        $beckon->invited = $invited;
+        $beckon->accepted = $accepted;
+        $beckon->rejected = $rejected;
         return $beckon;
     }
 }

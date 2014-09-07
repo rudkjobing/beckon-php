@@ -29,8 +29,15 @@ try{
     //$steffen = UserManager::eatCookie(10, "e3e1e81c14079ab5c2b378318650d4a9fae7f44d");
 
     $user = User::build(1);
-    $beckons = $user->getBeckons();
-    $beckonMember = BeckonMember::buildFromUserAndBeckonId($user, 39);
+    $beckon = Beckon::build(48);
+    echo $beckon->getInvited();
+    $beckon->setAccepted(100);
+    echo $beckon->getAccepted();
+    $beckon->setRejected(10);
+    echo $beckon->getRejected();
+    //BeckonManager::acceptBeckon($user, 48);
+    //$beckons = $user->getBeckons();
+    //$beckonMember = BeckonMember::buildFromUserAndBeckonId($user, 39);
     //$beckons->sync(3);
     //echo json_encode($beckons->jsonSerialize());
 
@@ -41,7 +48,7 @@ try{
     //$res = UserManager::eatCookie(4, "e257c39f059d908cf0b58786cfe7250eadeb3952");
     //User::buildNew("Steffen", "R", "asd", "asd");
     //$notification = NotificationManager::getNotification($res, 1);
-    //BeckonManager::addBeckon($res, "Kejser2", "2014-07-07 15:57:12 +0000", "2014-07-07 15:57:12 +0000", array(), array(2, 4));
+    //BeckonManager::addBeckon($user, "Kejser2", "blacc", "2014-07-07 15:57:12 +0000", "2014-07-07 15:57:12 +0000", array(), 0,0 ,array(2, 4));
 
     //echo json_encode($res->getJsonSerializedTree());
     //echo json_encode($notification);
