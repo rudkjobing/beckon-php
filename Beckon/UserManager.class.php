@@ -21,7 +21,7 @@ class UserManager {
         try{
             $user = User::buildFromEmailAndPassword($email, $password);
             $cookie = Cookie::buildNew($user);
-            return array("status" => 1, "message" => "User verified", "payload" => array("cookie" => $cookie->jsonSerialize()));
+            return array("status" => 1, "message" => "User verified", "payload" => array("cookie" => $cookie->jsonSerialize(), "userId" => $user->getId()));
         }
         catch(Exception $e){
             return array("status" => 0, "message" => $e->getMessage(), "payload" => "");
@@ -32,7 +32,7 @@ class UserManager {
         try{
             $user = User::buildNew($firstName, $lastName, $email, $password);
             $cookie = Cookie::buildNew($user);
-            return array("status" => 1, "message" => "User created", "payload" => array("cookie" => $cookie->jsonSerialize()));
+            return array("status" => 1, "message" => "User created", "payload" => array("cookie" => $cookie->jsonSerialize(), "userId" => $user->getId()));
         }
         catch(Exception $e){
             return array("status" => 0, "message" => $e->getMessage(), "payload" => "");
