@@ -32,7 +32,7 @@ class ChatRoomManager {
     public static function putChatRoomMessage(&$user, $chatRoomId, $message){
         try{
             $chatRoom = ChatRoom::build($chatRoomId);
-            $chatMessage = ChatMessage::buildNew($chatRoom, $user, $message);
+            ChatMessage::buildNew($chatRoom, $user, $message);
             $members = $chatRoom->getMembers()->getIterator();
             foreach($members as $member){
                 if($member->getUser() != $user){

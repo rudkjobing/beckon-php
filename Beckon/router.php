@@ -13,7 +13,6 @@ include_once "GroupManager.class.php";
 include_once "BeckonManager.class.php";
 include_once "DeviceManager.class.php";
 include_once "ChatRoomManager.class.php";
-include_once "NotificationManager.class.php";
 include_once "Beckon.class.php";
 include_once "User.class.php";
 include_once "Friend.class.php";
@@ -28,17 +27,16 @@ include_once "ChatRoomMember.class.php";
 include_once "ChatMessage.class.php";
 
 	if(!isset($_SERVER['HTTP_APPKEY']) || $_SERVER['HTTP_APPKEY'] != "6752dad744e6ab1bd0e65dbf4f2ffc77"){
-        foreach ($_SERVER as $key => $value) {
-            error_log($key . " -> " . $value . "\n", 3, "/var/www/html/errors.log");
-        }
+//        foreach ($_SERVER as $key => $value) {
+//            echo $key . " -> " . $value . "\n", 3, "/var/www/html/errors.log";
+//        }
         header("HTTP/1.0 404 Not Found");
         exit;
     }
-
 	$response = array("status" => 0, "message" => "fatal error", "payload" => "");
 	$body = file_get_contents('php://input');
-    error_log(date("Y-m-d H:i:s"). "\n" . json_encode($_SERVER), 3, "/var/www/html/errors.log");
-	error_log(date("Y-m-d H:i:s"). "\n" . $body, 3, "/var/www/html/errors.log");
+//    error_log(date("Y-m-d H:i:s"). "\n" . json_encode($_SERVER), 3, "/var/www/html/errors.log");
+//	error_log(date("Y-m-d H:i:s"). "\n" . $body, 3, "/var/www/html/errors.log");
 	$client = json_decode($body);
     if(isset($client->cookie)){
         try{
@@ -126,12 +124,12 @@ include_once "ChatMessage.class.php";
         }
     }
     else{
-        error_log(json_encode($decodebody) . "\n", 3, "/var/www/html/errors.log");
-        foreach ($_SERVER as $key => $value) {
-            error_log($key . " -> " . $value . "\n", 3, "/var/www/html/errors.log");
-        }
+//        error_log(json_encode($decodebody) . "\n", 3, "/var/www/html/errors.log");
+//        foreach ($_SERVER as $key => $value) {
+//            error_log($key . " -> " . $value . "\n", 3, "/var/www/html/errors.log");
+//        }
         header("HTTP/1.0 404 Not Found");
         exit;
     }
-    error_log(date("Y-m-d H:i:s"). "\n" . json_encode($response), 3, "/var/www/html/errors.log");
+//    error_log(date("Y-m-d H:i:s"). "\n" . json_encode($response), 3, "/var/www/html/errors.log");
 	echo json_encode($response);

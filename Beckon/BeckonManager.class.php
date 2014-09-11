@@ -11,6 +11,7 @@ class BeckonManager {
     public static function addBeckon(User $creator, $title, $description, $begins, $ends, $groups, $latitude, $longitude, $friends){
         try{
             $chatRoom = ChatRoom::buildNew($creator);
+            ChatMessage::buildNew($chatRoom, $creator, $description);
             $beckon = Beckon::buildNew($title, $description, $creator, $begins, $ends, $latitude, $longitude, $chatRoom);
             $users = array();
             foreach($groups as $group){
