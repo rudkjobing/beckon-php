@@ -14,7 +14,7 @@ class BeckonManager {
             if($description != ""){
                 ChatMessage::buildNew($chatRoom, $creator, $description);
             }
-            $beckon = Beckon::buildNew($title, $description, $creator, $begins, $ends, $latitude, $longitude, $chatRoom);
+            $beckon = Beckon::buildNew($title, "No Description", $creator, $begins, $ends, $latitude, $longitude, $chatRoom);
             $users = array();
             foreach($groups as $group){
                 $members = Group::build($group)->getMembers()->getIterator();
