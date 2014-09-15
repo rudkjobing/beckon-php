@@ -26,7 +26,7 @@ class BeckonManager {
                 $friend = Friend::build($friend);
                 array_push($users, $friend->getPeer()->getOwner());
             }
-            //$users = array_unique($users);
+            $users = array_unique($users);
             foreach($users as $user){
                 BeckonMember::buildNew($beckon, $user, "PENDING");
                 ChatRoomMember::buildNew($chatRoom,$user);

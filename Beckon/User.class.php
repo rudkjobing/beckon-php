@@ -162,6 +162,11 @@ class User extends Persistence implements JsonSerializable{
         }
     }
 
+    //This method will make array_unique work on an array of users
+    public function __toString() {
+        return strval($this->getId());
+    }
+
     //Serialization
     public function jsonSerialize() {
         return array("firstName" => $this->getFirstName(), "lastName" => $this->getLastName(), "emailAddress" => $this->getEmailAddress());
