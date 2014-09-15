@@ -87,7 +87,7 @@ include_once "ChatMessage.class.php";
             $response = BeckonManager::rejectBeckon($user, $client->beckonId);
         }
         elseif($_SERVER['HTTP_BECKON'] == "addBeckon"){
-            $response = BeckonManager::addBeckon($user, $client->beckon->title, $client->beckon->locationString, $client->beckon->begins, $client->beckon->ends, array(), $client->beckon->location->latitude, $client->beckon->location->longitude, $client->beckon->friends);
+            $response = BeckonManager::addBeckon($user, $client->beckon->title, $client->beckon->description, $client->beckon->locationString, $client->beckon->begins, $client->beckon->ends, array(), $client->beckon->location->latitude, $client->beckon->location->longitude, $client->beckon->friends);
         }
     }
     elseif(isset($_SERVER['HTTP_FRIEND'])){

@@ -8,7 +8,7 @@
 
 class BeckonManager {
 
-    public static function addBeckon(User $creator, $title, $locationString, $begins, $ends, $groups, $latitude, $longitude, $friends){
+    public static function addBeckon(User $creator, $title, $description, $locationString, $begins, $ends, $groups, $latitude, $longitude, $friends){
         try{
             $chatRoom = ChatRoom::buildNew($creator);
             if($description != ""){
