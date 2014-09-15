@@ -29,12 +29,8 @@ try{
     //$steffen = UserManager::eatCookie(10, "e3e1e81c14079ab5c2b378318650d4a9fae7f44d");
 
     $user = User::build(1);
-    $beckon = Beckon::build(48);
-    echo $beckon->getInvited();
-    $beckon->setAccepted(100);
-    echo $beckon->getAccepted();
-    $beckon->setRejected(10);
-    echo $beckon->getRejected();
+
+    echo json_encode(BeckonManager::getBeckons($user));
     //BeckonManager::acceptBeckon($user, 48);
     //$beckons = $user->getBeckons();
     //$beckonMember = BeckonMember::buildFromUserAndBeckonId($user, 39);
