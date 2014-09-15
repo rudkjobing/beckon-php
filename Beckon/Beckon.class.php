@@ -19,7 +19,7 @@ class Beckon extends Persistence implements JsonSerializable{
     //Properties
     private $id = null;
     private $title = null;
-    private $description = null;
+    private $locationString = null;
     private $owner = null;//User
     private $members = null;//BeckonMemberCollection of Friends
     private $begins = null;
@@ -46,9 +46,9 @@ class Beckon extends Persistence implements JsonSerializable{
         }
     }
 
-    public function setDescription($description){
-        if($this->description != $description){
-            $this->description = $description;
+    public function setLocationString($locationString){
+        if($this->locationString != $locationString){
+            $this->locationString = $locationString;
             $this->dirty = true;
         }
     }
@@ -112,9 +112,9 @@ class Beckon extends Persistence implements JsonSerializable{
         if(!is_null($this->title)){return $this->title;}
         else{$this->sync();return $this->title;}
     }
-    public function getDescription(){
-        if(!is_null($this->description)){return $this->description;}
-        else{$this->sync();return $this->description;}
+    public function getLocationString(){
+        if(!is_null($this->locationString)){return $this->locationString;}
+        else{$this->sync();return $this->locationString;}
     }
     public function getOwner(){
         if(!is_null($this->owner)){return $this->owner;}
@@ -163,10 +163,10 @@ class Beckon extends Persistence implements JsonSerializable{
         if($this->dirty){
             if($this->title == ""){throw new Exception("Object contains empty fields");}
             elseif(!is_null($this->id)){
-                $stmt = self::getConnection()->prepare("update Beckon set owner = :owner, title = :title, description = :description, begins = :begins, ends = :ends, latitude = :latitude, longitude = :longitude, chatRoom = :chatRoom, invited = :invited, accepted = :accepted, rejected = :rejected where id = :id");
+                $stmt = self::getConnection()->prepare("update Beckon set owner = :owner, title = :title, locationString = :locationString, begins = :begins, ends = :ends, latitude = :latitude, longitude = :longitude, chatRoom = :chatRoom, invited = :invited, accepted = :accepted, rejected = :rejected where id = :id");
                 $stmt->execute(array(
                     "title" => $this->getTitle(),
-                    "description" => $this->getDescription(),
+                    "locationString" => $this->getLocationString(),
                     "owner" => $this->getOwner()->getId(),
                     "begins" => $this->getBegins(),
                     "ends" => $this->getEnds(),
@@ -181,10 +181,10 @@ class Beckon extends Persistence implements JsonSerializable{
             }
             elseif(is_null($this->id)){
                 try{
-                    $stmt = self::getConnection()->prepare("insert into Beckon (title, description, owner, begins, ends, latitude, longitude, chatRoom, invited, accepted, rejected) values (:title, :description, :owner, :begins, :ends, :latitude, :longitude, :chatRoom, :invited, :accepted, :rejected)");
+                    $stmt = self::getConnection()->prepare("insert into Beckon (title, locationString, owner, begins, ends, latitude, longitude, chatRoom, invited, accepted, rejected) values (:title, :locationString, :owner, :begins, :ends, :latitude, :longitude, :chatRoom, :invited, :accepted, :rejected)");
                     $stmt->execute(array(
                         "title" => $this->getTitle(),
-                        "description" => $this->getDescription(),
+                        "locationString" => $this->getLocationString(),
                         "owner" => $this->getOwner()->getId(),
                         "begins" => $this->getBegins(),
                         "ends" => $this->getEnds(),
@@ -220,7 +220,7 @@ class Beckon extends Persistence implements JsonSerializable{
                     $this->id = $row['id'];
                     $this->owner = User::build($row['owner']);
                     $this->title = $row['title'];
-                    $this->description = $row['description'];
+                    $this->locationString = $row['locationString'];
                     $this->begins = $row['begins'];
                     $this->ends = $row['ends'];
                     $this->latitude = $row['latitude'];
@@ -258,10 +258,10 @@ class Beckon extends Persistence implements JsonSerializable{
         }
     }
 
-    public static function buildNew($title, $description, &$owner, $begins, $ends, $latitude, $longitude, &$chatRoom){
+    public static function buildNew($title, $locationString, &$owner, $begins, $ends, $latitude, $longitude, &$chatRoom){
         $beckon = New Beckon();
         $beckon->setTitle($title);
-        $beckon->setDescription($description);
+        $beckon->setLocationString($locationString);
         $beckon->setOwner($owner);
         $beckon->setBegins($begins);
         $beckon->setEnds($ends);
@@ -280,10 +280,10 @@ class Beckon extends Persistence implements JsonSerializable{
         return $beckon;
     }
 
-    public static function buildExisting($id, $title, $description, $begins, $ends, $ownerId, $latitude, $longitude, $chatRoomId, $invited, $accepted, $rejected){
+    public static function buildExisting($id, $title, $locationString, $begins, $ends, $ownerId, $latitude, $longitude, $chatRoomId, $invited, $accepted, $rejected){
         $beckon = self::build($id);
         $beckon->title = $title;
-        $beckon->description = $description;
+        $beckon->locationString = $locationString;
         $beckon->begins = $begins;
         $beckon->ends = $ends;
         $beckon->owner = User::build($ownerId);

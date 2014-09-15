@@ -50,8 +50,8 @@ class BeckonCollection extends Persistence implements JsonSerializable,Collectio
 
     public function sync($id = 0){
         if(!is_null($this->id)){
-            foreach($this->q("select Beckon.id, Beckon.title, Beckon.description, Beckon.begins, Beckon.ends, Beckon.owner, Beckon.id, Beckon.latitude, Beckon.longitude, Beckon.chatRoom, Beckon.invited, Beckon.accepted, Beckon.rejected from BeckonMember inner join Beckon on BeckonMember.beckon = Beckon.id where BeckonMember.user = {$this->id} and Beckon.id > {$id}") as $beckon){
-                $this->addItem(Beckon::buildExisting($beckon['id'], $beckon['title'], $beckon['description'], $beckon['begins'], $beckon['ends'], $beckon['owner'], $beckon['latitude'], $beckon['longitude'], $beckon['chatRoom'], $beckon['invited'], $beckon['accepted'], $beckon['rejected']), $beckon['id']);
+            foreach($this->q("select Beckon.id, Beckon.title, Beckon.locationString, Beckon.begins, Beckon.ends, Beckon.owner, Beckon.id, Beckon.latitude, Beckon.longitude, Beckon.chatRoom, Beckon.invited, Beckon.accepted, Beckon.rejected from BeckonMember inner join Beckon on BeckonMember.beckon = Beckon.id where BeckonMember.user = {$this->id} and Beckon.id > {$id}") as $beckon){
+                $this->addItem(Beckon::buildExisting($beckon['id'], $beckon['title'], $beckon['locationString'], $beckon['begins'], $beckon['ends'], $beckon['owner'], $beckon['latitude'], $beckon['longitude'], $beckon['chatRoom'], $beckon['invited'], $beckon['accepted'], $beckon['rejected']), $beckon['id']);
             }
         }
     }
