@@ -51,7 +51,7 @@ class ChatRoomMemberCollection extends Persistence implements JsonSerializable,C
     public function sync(){
         if(!is_null($this->id)){
             foreach($this->q("select * from ChatRoomMember where chatRoom = {$this->id}") as $chatRoomMember){
-                $this->addItem(ChatRoomMember::buildExisting($chatRoomMember['id'],  $chatRoomMember['chatRoom'], $chatRoomMember['user']), $chatRoomMember['id']);
+                $this->addItem(ChatRoomMember::buildExisting($chatRoomMember['id'],  $chatRoomMember['chatRoom'], $chatRoomMember['user'], $chatRoomMember['hasUnreadMessages']), $chatRoomMember['id']);
             }
         }
     }

@@ -17,7 +17,7 @@ class ChatMessage extends Persistence implements JsonSerializable{
     //Properties
     private $id = null;
     private $chatRoom = null;//ChatRoom
-    private $owner = null;//User
+    private $owner = null;
     private $message = null;
     private $date = null;
 

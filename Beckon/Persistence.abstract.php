@@ -23,6 +23,14 @@ abstract class Persistence{
     private static $queryCount = 0;
     protected $dirty = false;
 
+    public static function beginTransaction(){
+        self::getConnection()->beginTransaction();
+    }
+
+    public static function commitTransaction(){
+        self::getConnection()->commit();
+    }
+
     protected static function getConnection(){
         if(self::$connection){
             self::$reuseCount++;
