@@ -156,8 +156,8 @@ class ChatRoomMember extends Persistence implements JsonSerializable{
         if($stmt->rowCount() > 0){
             foreach($set as $row){
                 $chatRoomMember = self::build($row['id']);
-                $chatRoomMember->chatRoom = $row['chatRoom'];
-                $chatRoomMember->user = $row['user'];
+                $chatRoomMember->chatRoom = ChatRoom::build($row['chatRoom']);
+                $chatRoomMember->user = User::build($row['user']);
                 $chatRoomMember->hasUnreadMessages = $row['hasUnreadMessages'];
                 return $chatRoomMember;
             }
