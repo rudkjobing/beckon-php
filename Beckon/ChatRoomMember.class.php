@@ -78,7 +78,7 @@ class ChatRoomMember extends Persistence implements JsonSerializable{
                 $stmt->execute(array("chatRoom" => $this->getId(), "user" => $this->getUser()->getId(), "hasUnreadMessages" => $this->getHasUnreadMessages(), "id" => $this->getId()));
             }
             catch(Exception $e){
-                throw new Exception("Flush failed", 0, $e);
+                throw new Exception("Flush failed ".$e->getMessage(), 0, $e);
             }
         }
     }
