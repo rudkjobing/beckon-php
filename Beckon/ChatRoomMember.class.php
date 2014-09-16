@@ -18,7 +18,7 @@ class ChatRoomMember extends Persistence implements JsonSerializable{
     private $id = null;
     private $chatRoom = null;//User
     private $user = null;
-    private $hasUnreadMessages;
+    private $hasUnreadMessages = null;
 
     //Setters
     public function setChatRoom(&$chatRoom){
@@ -127,7 +127,7 @@ class ChatRoomMember extends Persistence implements JsonSerializable{
         }
     }
 
-    public static function buildNew($chatRoom, $user, $hasUnreadMessages = 0){
+    public static function buildNew($chatRoom, $user, $hasUnreadMessages = false){
         $chatRoomMember = New ChatRoomMember();
         $chatRoomMember->setChatRoom($chatRoom);
         $chatRoomMember->setUser($user);
@@ -141,7 +141,7 @@ class ChatRoomMember extends Persistence implements JsonSerializable{
         return $chatRoomMember;
     }
 
-    public static function buildExisting($id, $chatRoomId, $userId, $hasUnreadMessages = 0){
+    public static function buildExisting($id, $chatRoomId, $userId, $hasUnreadMessages = false){
         $chatRoomMember = self::build($id);
         $chatRoomMember->setChatRoom(ChatRoom::build($chatRoomId));
         $chatRoomMember->setUser(User::build($userId));
