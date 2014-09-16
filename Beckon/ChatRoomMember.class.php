@@ -74,7 +74,7 @@ class ChatRoomMember extends Persistence implements JsonSerializable{
         }
         elseif($this->dirty){
             try{
-                $stmt = self::getConnection()->prepare("update ChatRoomMember asUnreadMessages = :hasUnreadMessages where id = :id");
+                $stmt = self::getConnection()->prepare("update ChatRoomMember set hasUnreadMessages = :hasUnreadMessages where id = :id");
                 $stmt->execute(array("hasUnreadMessages" => $this->getHasUnreadMessages(), "id" => $this->getId()));
             }
             catch(Exception $e){
