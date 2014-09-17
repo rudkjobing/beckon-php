@@ -42,22 +42,18 @@ class ChatRoomMember extends Persistence implements JsonSerializable{
 
     //Lazy Getters
     public function getId(){
-        $this->caller = "id";
         if(!is_null($this->id)){return $this->id;}
         else{$this->sync();return $this->id;}
     }
     public function getChatRoom(){
-        $this->caller = "chatRoom";
         if(!is_null($this->chatRoom)){return $this->chatRoom;}
         else{$this->sync();return $this->chatRoom;}
     }
     public function getUser(){
-        $this->caller = "user";
         if(!is_null($this->user)){return $this->user;}
         else{$this->sync();return $this->user;}
     }
     public function getHasUnreadMessages(){
-        $this->caller = "hasUnreadMessages";
         if(!is_null($this->hasUnreadMessages)){return $this->hasUnreadMessages;}
         else{$this->sync();return $this->hasUnreadMessages;}
     }
@@ -133,7 +129,7 @@ class ChatRoomMember extends Persistence implements JsonSerializable{
         }
     }
 
-    public static function buildNew($chatRoom, $user, $hasUnreadMessages = false){
+    public static function buildNew($chatRoom, $user, $hasUnreadMessages){
         $chatRoomMember = New ChatRoomMember();
         $chatRoomMember->setChatRoom($chatRoom);
         $chatRoomMember->setUser($user);
@@ -147,7 +143,7 @@ class ChatRoomMember extends Persistence implements JsonSerializable{
         return $chatRoomMember;
     }
 
-    public static function buildExisting($id, $chatRoomId, $userId, $hasUnreadMessages = false){
+    public static function buildExisting($id, $chatRoomId, $userId, $hasUnreadMessages){
         $chatRoomMember = self::build($id);
         $chatRoomMember->chatRoom = ChatRoom::build($chatRoomId);
         $chatRoomMember->user = User::build($userId);

@@ -23,7 +23,7 @@ class ChatRoomManager {
                 }
                 array_push($result, $msg);
             }
-            $chatRoomMember->setHasUnreadMessages(false);
+            $chatRoomMember->setHasUnreadMessages(0);
             $chatRoomMember->flush();
             return array("status" => 1, "message" => "Messages fetched", "payload" => array("messages" =>$result));
         }
@@ -40,7 +40,7 @@ class ChatRoomManager {
             $members = $chatRoom->getMembers()->getIterator();
             foreach($members as $member){/* @var $member ChatRoomMember */
                 if($member->getUser() != $user){
-                    $member->setHasUnreadMessages(true);
+                    $member->setHasUnreadMessages(1);
                     $member->flush();
                     Notification::buildNew($member->getUser(), "ChatRoom", $chatRoomId, $message);
                 }
