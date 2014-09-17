@@ -39,7 +39,7 @@ class ChatRoomManager {
             ChatMessage::buildNew($chatRoom, $user, $message);
             $members = $chatRoom->getMembers()->getIterator();
             foreach($members as $member){/* @var $member ChatRoomMember */
-                if($member->getUser().getId() != $user->getId()){
+                if($member->getUser() != $user){
                     $member->setHasUnreadMessages(1);
                     $member->flush();
                     Notification::buildNew($member->getUser(), "ChatRoom", $chatRoomId, $message);

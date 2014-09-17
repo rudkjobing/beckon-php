@@ -6,7 +6,6 @@ include_once "FriendManager.class.php";
 include_once "GroupManager.class.php";
 include_once "BeckonManager.class.php";
 include_once "ChatRoomManager.class.php";
-include_once "NotificationManager.class.php";
 include_once "Beckon.class.php";
 include_once "User.class.php";
 include_once "Friend.class.php";
@@ -28,14 +27,17 @@ try{
     //$bertil = UserManager::eatCookie(15, "05aacbea048f11056adfb52ecc680acba0a97a51");
     //$steffen = UserManager::eatCookie(10, "e3e1e81c14079ab5c2b378318650d4a9fae7f44d");
 
-    $user = User::build(1);
-
-    echo json_encode(BeckonManager::getBeckons($user));
+//    $user = User::build(1);
+//
+//    echo json_encode(BeckonManager::getBeckons($user));
     //BeckonManager::acceptBeckon($user, 48);
     //$beckons = $user->getBeckons();
     //$beckonMember = BeckonMember::buildFromUserAndBeckonId($user, 39);
     //$beckons->sync(3);
     //echo json_encode($beckons->jsonSerialize());
+    if(0 !== null){
+        echo "OK\n";
+    }
 
     //$res = UserManager::signIn("slyngel@gmail.com", "");
 
@@ -80,4 +82,4 @@ catch(Exception $e){
 
 
 
-echo Persistence::getUsage();
+//echo Persistence::getUsage();
