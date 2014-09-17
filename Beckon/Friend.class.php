@@ -135,7 +135,7 @@ class Friend extends Persistence implements JsonSerializable{
             }
         }
         else{
-            throw New Exception("Unable to sync unknown object instance");
+            throw New Exception("Unable to sync unknown Friend instance");
         }
     }
 

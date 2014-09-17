@@ -104,7 +104,7 @@ class Group extends Persistence implements JsonSerializable{
             }
         }
         else{
-            throw New Exception("Unable to sync unknown object instance");
+            throw New Exception("Unable to sync unknown Group instance");
         }
     }
 

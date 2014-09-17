@@ -58,10 +58,7 @@ class BeckonCollection extends Persistence implements JsonSerializable,Collectio
 
     public function flush(){
         foreach($this->entities as $key => $object){
-            $c = self::getConnection();
-            $c->beginTransaction();
             $object->flush();
-            $c->commit();
         }
     }
 

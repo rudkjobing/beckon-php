@@ -31,6 +31,10 @@ abstract class Persistence{
         self::getConnection()->commit();
     }
 
+    public static function rollbackTransaction(){
+        self::getConnection()->rollBack();
+    }
+
     protected static function getConnection(){
         if(self::$connection){
             self::$reuseCount++;

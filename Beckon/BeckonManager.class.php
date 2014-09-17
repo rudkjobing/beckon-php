@@ -10,6 +10,7 @@ class BeckonManager {
 
     public static function addBeckon(User $creator, $title, $description, $locationString, $begins, $ends, $groups, $latitude, $longitude, $friends){
         try{
+            Beckon::beginTransaction();
             $chatRoom = ChatRoom::buildNew($creator);
             if($description != ""){
                 ChatMessage::buildNew($chatRoom, $creator, $description);
@@ -29,16 +30,18 @@ class BeckonManager {
             $users = array_unique($users);
             foreach($users as $user){
                 BeckonMember::buildNew($beckon, $user, "PENDING");
-                ChatRoomMember::buildNew($chatRoom,$user);
+                ChatRoomMember::buildNew($chatRoom, $user, false);
                 Notification::buildNew($user, "Beckon", 0, $creator->getFirstName() . " Beckons you");
             }
             BeckonMember::buildNew($beckon, $creator, "ACCEPTED");
-            ChatRoomMember::buildNew($chatRoom,$creator);
-            $beckon->setInvited(count($users));
+            ChatRoomMember::buildNew($chatRoom, $creator, false);
+            $beckon->setInvited(count($users) + 1);
             $beckon->flush();
+            Beckon::commitTransaction();
             return array("status" => 1, "message" => "Beckon created", "payload" => array("beckon"=> $beckon->jsonSerialize()));
         }
         catch(Exception $e){
+            Beckon::rollbackTransaction();
             return array("status" => 0, "message" => $e->getMessage(), "payload" => "");
         }
     }
@@ -68,27 +71,6 @@ class BeckonManager {
                 );
                 array_push($beckonsArray, $beckonArray);
             }
-
-//            begins = "2014-09-15 18:45:39";
-//            chatRoom = 144;
-//            ends = "2014-09-15 19:45:39";
-//            id = 94;
-//            latitude = "56.151927977257";
-//            locationString = "Musikhuset Aarhus";
-//            longitude = "10.20084106149";
-//            members =                 (
-//                                        {
-//                                            beckon = 94;
-//                                            firstName = Steffen;
-//                                            lastName = Rudkjobing;
-//                                            status = ACCEPTED;
-//                                            user = 1;
-//                                        }
-//                );
-//                owner = 1;
-//                title = "Epic fail";
-
-            //return array("status" => 1, "message" => "Beckons fetched", "payload" => array("beckons" => $beckons->jsonSerialize()));
 
             return array("status" => 1, "message" => "Beckons fetched", "payload" => array("beckons" => $beckonsArray));
         }

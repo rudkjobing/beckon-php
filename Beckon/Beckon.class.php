@@ -157,7 +157,6 @@ class Beckon extends Persistence implements JsonSerializable{
         else{$this->sync();return $this->rejected;}
     }
 
-
     //Persistence
     public function flush(){
         if($this->dirty){

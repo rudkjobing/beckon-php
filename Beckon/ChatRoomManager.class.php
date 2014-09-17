@@ -23,7 +23,7 @@ class ChatRoomManager {
                 }
                 array_push($result, $msg);
             }
-            $chatRoomMember->setHasUnreadMessages(0);
+            $chatRoomMember->setHasUnreadMessages(false);
             $chatRoomMember->flush();
             return array("status" => 1, "message" => "Messages fetched", "payload" => array("messages" =>$result));
         }
@@ -34,21 +34,22 @@ class ChatRoomManager {
 
     public static function putChatRoomMessage(&$user, $chatRoomId, $message){
         try{
+            ChatRoom::beginTransaction();
             $chatRoom = ChatRoom::build($chatRoomId);
             ChatMessage::buildNew($chatRoom, $user, $message);
             $members = $chatRoom->getMembers()->getIterator();
-            ChatRoomMember::beginTransaction();
             foreach($members as $member){/* @var $member ChatRoomMember */
                 if($member->getUser() != $user){
-                    $member->setHasUnreadMessages(1);
-                    Notification::buildNew($member->getUser(), "ChatRoom", $chatRoomId, $message);
+                    $member->setHasUnreadMessages(true);
                     $member->flush();
+                    Notification::buildNew($member->getUser(), "ChatRoom", $chatRoomId, $message);
                 }
             }
-            ChatRoomMember::commitTransaction();
+            ChatRoom::commitTransaction();
             return array("status" => 1, "message" => "Message recieved", "payload" => "");
         }
         catch(Exception $e){
+            ChatRoom::rollbackTransaction();
             return array("status" => 0, "message" => $e->getMessage(), "payload" => "");
         }
     }

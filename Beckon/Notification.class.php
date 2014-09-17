@@ -31,20 +31,6 @@ class Notification extends Persistence implements JsonSerializable{
         }
     }
 
-//    public function setObjectClass($objectClass){
-//        if($this->objectClass != $objectClass){
-//            $this->objectClass = $objectClass;
-//            $this->dirty = true;
-//        }
-//    }
-//
-//    public function setObject(&$object){
-//        if($this->object != $object){
-//            $this->object = $object;
-//            $this->dirty = true;
-//        }
-//    }
-
     public function setMessage($message){
         if($this->message != $message){
             $this->message = $message;

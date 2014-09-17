@@ -34,7 +34,7 @@ class ChatRoomMember extends Persistence implements JsonSerializable{
         }
     }
     public function setHasUnreadMessages($hasUnreadMessages){
-        if($this->hasUnreadMessages != $hasUnreadMessages){
+        if($this->hasUnreadMessages !== $hasUnreadMessages){
             $this->hasUnreadMessages = $hasUnreadMessages;
             $this->dirty = true;
         }
@@ -42,43 +42,49 @@ class ChatRoomMember extends Persistence implements JsonSerializable{
 
     //Lazy Getters
     public function getId(){
+        $this->caller = "id";
         if(!is_null($this->id)){return $this->id;}
         else{$this->sync();return $this->id;}
     }
     public function getChatRoom(){
+        $this->caller = "chatRoom";
         if(!is_null($this->chatRoom)){return $this->chatRoom;}
         else{$this->sync();return $this->chatRoom;}
     }
     public function getUser(){
+        $this->caller = "user";
         if(!is_null($this->user)){return $this->user;}
         else{$this->sync();return $this->user;}
     }
     public function getHasUnreadMessages(){
+        $this->caller = "hasUnreadMessages";
         if(!is_null($this->hasUnreadMessages)){return $this->hasUnreadMessages;}
         else{$this->sync();return $this->hasUnreadMessages;}
     }
 
     //Persistence
     public function flush(){
-        if($this->dirty && is_null($this->id)){
-            try{
-                $stmt = self::getConnection()->prepare("insert into ChatRoomMember (chatRoom, `user`, hasUnreadMessages) values (:chatRoom, :user :hasUnreadMessages)");
-                $stmt->execute(array("chatRoom" => $this->getChatRoom()->getId(), "user" => $this->getUser()->getId(), "hasUnreadMessages" => $this->getHasUnreadMessages()));
-                $this->id = self::$connection->lastInsertId();
-                self::cachePut("ChatRoomMember", $this->getId(), $this);
-                $this->dirty = false;
+        if($this->dirty){
+            if(is_null($this->id)){
+                try{
+                    $stmt = self::getConnection()->prepare("insert into ChatRoomMember (chatRoom, `user`, hasUnreadMessages) values (:chatRoom, :user, :hasUnreadMessages)");
+                    $stmt->execute(array("chatRoom" => $this->getChatRoom()->getId(), "user" => $this->getUser()->getId(), "hasUnreadMessages" => $this->getHasUnreadMessages()));
+                    $this->id = self::$connection->lastInsertId();
+                    self::cachePut("ChatRoomMember", $this->getId(), $this);
+                    $this->dirty = false;
+                }
+                catch(Exception $e){
+                    throw new Exception($e->getMessage(), 0, $e);
+                }
             }
-            catch(Exception $e){
-                throw new Exception("Flush failed", 0, $e);
-            }
-        }
-        elseif($this->dirty){
-            try{
-                $stmt = self::getConnection()->prepare("update ChatRoomMember set hasUnreadMessages = :hasUnreadMessages where id = :id");
-                $stmt->execute(array("hasUnreadMessages" => $this->getHasUnreadMessages(), "id" => $this->getId()));
-            }
-            catch(Exception $e){
-                throw new Exception("Flush failed", 0, $e);
+            elseif(!is_null($this->id)){
+                try{
+                    $stmt = self::getConnection()->prepare("update ChatRoomMember set hasUnreadMessages = :hasUnreadMessages where id = :id");
+                    $stmt->execute(array("hasUnreadMessages" => $this->getHasUnreadMessages(), "id" => $this->getId()));
+                }
+                catch(Exception $e){
+                    throw new Exception($e->getMessage(), 0, $e);
+                }
             }
         }
     }
@@ -106,7 +112,7 @@ class ChatRoomMember extends Persistence implements JsonSerializable{
             }
         }
         else{
-            throw New Exception("Unable to sync unknown object instance");
+            throw New Exception("Unable to sync unknown ChatRoomMember instance");
         }
     }
 
@@ -127,7 +133,7 @@ class ChatRoomMember extends Persistence implements JsonSerializable{
         }
     }
 
-    public static function buildNew($chatRoom, $user, $hasUnreadMessages = 0){
+    public static function buildNew($chatRoom, $user, $hasUnreadMessages = false){
         $chatRoomMember = New ChatRoomMember();
         $chatRoomMember->setChatRoom($chatRoom);
         $chatRoomMember->setUser($user);
@@ -141,7 +147,7 @@ class ChatRoomMember extends Persistence implements JsonSerializable{
         return $chatRoomMember;
     }
 
-    public static function buildExisting($id, $chatRoomId, $userId, $hasUnreadMessages = 0){
+    public static function buildExisting($id, $chatRoomId, $userId, $hasUnreadMessages = false){
         $chatRoomMember = self::build($id);
         $chatRoomMember->chatRoom = ChatRoom::build($chatRoomId);
         $chatRoomMember->user = User::build($userId);
