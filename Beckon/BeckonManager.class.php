@@ -88,7 +88,7 @@ class BeckonManager {
                 $beckon->flush();
                 $beckonMember->setStatus("ACCEPTED");
                 $beckonMember->flush();
-                Notification::buildNew($beckon->getOwner(), "beckon", $beckon->getId(), "{$user->getFirstName()} has accepted your invitation");
+                Notification::buildNew($beckon->getOwner(), "Beckon", $beckon->getId(), "{$user->getFirstName()} has accepted your invitation");
                 return array("status" => 1, "message" => "Beckon accepted", "payload" => "");
             }
             elseif($beckonMember->getStatus() == "REJECTED"){
@@ -97,7 +97,7 @@ class BeckonManager {
                 $beckon->flush();
                 $beckonMember->setStatus("ACCEPTED");
                 $beckonMember->flush();
-                Notification::buildNew($beckon->getOwner(), "beckon", $beckon->getId(), "{$user->getFirstName()} has accepted your invitation");
+                Notification::buildNew($beckon->getOwner(), "Beckon", $beckon->getId(), "{$user->getFirstName()} has accepted your invitation");
                 return array("status" => 1, "message" => "Beckon accepted", "payload" => "");
             }
             else{

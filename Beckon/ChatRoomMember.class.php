@@ -152,7 +152,7 @@ class ChatRoomMember extends Persistence implements JsonSerializable{
     }
 
     public static function buildFromChatRoomAndUser(&$chatRoom, &$user){
-        $stmt = self::getConnection()->prepare("select * from ChatRoomMember where user = :user and chatRoom = :chatRoom");
+        $stmt = self::getConnection()->prepare("select * from ChatRoomMember where `user` = :user and chatRoom = :chatRoom");
         $stmt->execute(array("user" => $user->getId(), "chatRoom" => $chatRoom->getId()));
         $set = $stmt->fetchAll();
         if($stmt->rowCount() > 0){
