@@ -35,9 +35,11 @@ try{
     //$beckonMember = BeckonMember::buildFromUserAndBeckonId($user, 39);
     //$beckons->sync(3);
     //echo json_encode($beckons->jsonSerialize());
-    if(0 !== null){
-        echo "OK\n";
-    }
+    $steff = User::build(1);
+    $made = User::build(2);
+    $chatRoom = ChatRoom::Build(181);
+
+    ChatRoomManager::putChatRoomMessage($made, $chatRoom->getId(), "Test fra server");
 
     //$res = UserManager::signIn("slyngel@gmail.com", "");
 
@@ -82,4 +84,4 @@ catch(Exception $e){
 
 
 
-//echo Persistence::getUsage();
+echo Persistence::getUsage();
