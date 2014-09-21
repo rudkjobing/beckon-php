@@ -37,7 +37,7 @@ try{
     //echo json_encode($beckons->jsonSerialize());
     $steff = User::build(1);
     $made = User::build(2);
-    $chatRoom = ChatRoom::Build(181);
+    $chatRoom = ChatRoom::Build(119);
 
     ChatRoomManager::putChatRoomMessage($made, $chatRoom->getId(), "Test fra server");
 
