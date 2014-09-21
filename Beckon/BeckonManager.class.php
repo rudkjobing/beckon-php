@@ -91,7 +91,7 @@ class BeckonManager {
                 $beckon->flush();
                 $beckonMember->setStatus("ACCEPTED");
                 $beckonMember->flush();
-                foreach($beckon->getMembers() as $member) {
+                foreach($beckon->getMembers()->getIterator() as $member) {
                     /* @var $member BeckonMember */
                     if($member->getStatus() == "ACCEPTED" && $member->getUser()->getId() != $user->getId()) {
                         Notification::buildNew($member->getUser(), "Beckon", $beckon->getId(), "{$user->getFirstName()} {$user->getLastName()} will attend {$beckon->getTitle()}");
@@ -106,7 +106,7 @@ class BeckonManager {
                 $beckon->flush();
                 $beckonMember->setStatus("ACCEPTED");
                 $beckonMember->flush();
-                foreach($beckon->getMembers() as $member) {
+                foreach($beckon->getMembers()->getIterator() as $member) {
                     /* @var $member BeckonMember */
                     if($member->getStatus() == "ACCEPTED" && $member->getUser()->getId() != $user->getId()) {
                         Notification::buildNew($member->getUser(), "Beckon", $beckon->getId(), "{$user->getFirstName()} {$user->getLastName()} will attend {$beckon->getTitle()}");
@@ -136,7 +136,7 @@ class BeckonManager {
                 $beckon->flush();
                 $beckonMember->setStatus("REJECTED");
                 $beckonMember->flush();
-                foreach($beckon->getMembers() as $member){
+                foreach($beckon->getMembers()->getIterator() as $member){
                     /* @var $member BeckonMember */
                     if($member->getStatus() == "ACCEPTED" && $member->getUser()->getId() != $user->getId()){
                         Notification::buildNew($member->getUser(), "Beckon", $beckon->getId(), "{$user->getFirstName()} {$user->getLastName()} passed on {$beckon->getTitle()}");
@@ -151,7 +151,7 @@ class BeckonManager {
                 $beckon->flush();
                 $beckonMember->setStatus("REJECTED");
                 $beckonMember->flush();
-                foreach($beckon->getMembers() as $member) {
+                foreach($beckon->getMembers()->getIterator() as $member) {
                     /* @var $member BeckonMember */
                     if($member->getStatus() == "ACCEPTED" && $member->getUser()->getId() != $user->getId()) {
                         Notification::buildNew($member->getUser(), "Beckon", $beckon->getId(), "{$user->getFirstName()} {$user->getLastName()} passed on {$beckon->getTitle()}");

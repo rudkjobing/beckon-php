@@ -31,6 +31,10 @@ class BeckonMemberCollection extends Persistence implements JsonSerializable,Col
         return array_keys($this->entities);
     }
 
+    public function getIterator(){
+        return array_values($this->entities);
+    }
+
     public function addItem(&$object, $key){
         if(get_class($object) == "BeckonMember"){
             $this->entities[$key] = &$object;
