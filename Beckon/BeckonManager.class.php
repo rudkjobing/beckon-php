@@ -186,7 +186,7 @@ class BeckonManager {
                     $newBeckonOwner = $member->getUser();
                 }
             }
-            if($memberCount == 1){
+            if($memberCount == 0){
                 $beckon->delete();
             }
             else{
@@ -197,6 +197,7 @@ class BeckonManager {
                 $beckonMember->delete();
             }
             Beckon::commitTransaction();
+            return array("status" => 1, "message" => "Beckon deleted", "payload" => "");
         }
         catch(Exception $e){
             Beckon::rollbackTransaction();
