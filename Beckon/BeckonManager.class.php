@@ -171,7 +171,7 @@ class BeckonManager {
         }
     }
 
-    public function deleteBeckon(User &$user, $beckonId){
+    public static function deleteBeckon(User &$user, $beckonId){
         try {
             Beckon::beginTransaction();
             $beckon = Beckon::build($beckonId);
