@@ -83,6 +83,7 @@ class BeckonManager {
 
     public static function acceptBeckon(User $user, $beckonId){
         try{
+            Beckon::beginTransaction();
             $beckon = Beckon::build($beckonId);
             $beckonMember = BeckonMember::buildFromUserAndBeckonId($user, $beckonId);
             if($beckonMember->getStatus() == "PENDING"){
@@ -90,7 +91,13 @@ class BeckonManager {
                 $beckon->flush();
                 $beckonMember->setStatus("ACCEPTED");
                 $beckonMember->flush();
-                Notification::buildNew($beckon->getOwner(), "Beckon", $beckon->getId(), "{$user->getFirstName()} has accepted {$beckon->getTitle()}");
+                foreach($beckon->getMembers() as $member) {
+                    /* @var $member BeckonMember */
+                    if($member->getStatus() == "ACCEPTED" && $member->getUser()->getId() != $user->getId()) {
+                        Notification::buildNew($member->getUser(), "Beckon", $beckon->getId(), "{$user->getFirstName()} {$user->getLastName()} will attend {$beckon->getTitle()}");
+                    }
+                }
+                Beckon::commitTransaction();
                 return array("status" => 1, "message" => "Beckon accepted", "payload" => "");
             }
             elseif($beckonMember->getStatus() == "REJECTED"){
@@ -99,20 +106,29 @@ class BeckonManager {
                 $beckon->flush();
                 $beckonMember->setStatus("ACCEPTED");
                 $beckonMember->flush();
-                Notification::buildNew($beckon->getOwner(), "Beckon", $beckon->getId(), "{$user->getFirstName()} has accepted {$beckon->getTitle()}");
+                foreach($beckon->getMembers() as $member) {
+                    /* @var $member BeckonMember */
+                    if($member->getStatus() == "ACCEPTED" && $member->getUser()->getId() != $user->getId()) {
+                        Notification::buildNew($member->getUser(), "Beckon", $beckon->getId(), "{$user->getFirstName()} {$user->getLastName()} will attend {$beckon->getTitle()}");
+                    }
+                }
+                Beckon::commitTransaction();
                 return array("status" => 1, "message" => "Beckon accepted", "payload" => "");
             }
             else{
+                Beckon::rollbackTransaction();
                 return array("status" => 0, "message" => "Beckon already accepted", "payload" => "");
             }
         }
         catch(Exception $e){
+            Beckon::rollbackTransaction();
             return array("status" => 0, "message" => $e->getMessage(), "payload" => "");
         }
     }
 
     public static function rejectBeckon(User $user, $beckonId){
         try{
+            Beckon::beginTransaction();
             $beckon = Beckon::build($beckonId);
             $beckonMember = BeckonMember::buildFromUserAndBeckonId($user, $beckonId);
             if($beckonMember->getStatus() == "PENDING"){
@@ -120,7 +136,13 @@ class BeckonManager {
                 $beckon->flush();
                 $beckonMember->setStatus("REJECTED");
                 $beckonMember->flush();
-                Notification::buildNew($beckon->getOwner(), "beckon", $beckon->getId(), "{$user->getFirstName()} has rejected {$beckon->getTitle()}");
+                foreach($beckon->getMembers() as $member){
+                    /* @var $member BeckonMember */
+                    if($member->getStatus() == "ACCEPTED" && $member->getUser()->getId() != $user->getId()){
+                        Notification::buildNew($member->getUser(), "Beckon", $beckon->getId(), "{$user->getFirstName()} {$user->getLastName()} passed on {$beckon->getTitle()}");
+                    }
+                }
+                Beckon::commitTransaction();
                 return array("status" => 1, "message" => "Beckon rejected", "payload" => "");
             }
             elseif($beckonMember->getStatus() == "ACCEPTED"){
@@ -129,14 +151,22 @@ class BeckonManager {
                 $beckon->flush();
                 $beckonMember->setStatus("REJECTED");
                 $beckonMember->flush();
-                Notification::buildNew($beckon->getOwner(), "beckon", $beckon->getId(), "{$user->getFirstName()} has rejected {$beckon->getTitle()}");
+                foreach($beckon->getMembers() as $member) {
+                    /* @var $member BeckonMember */
+                    if($member->getStatus() == "ACCEPTED" && $member->getUser()->getId() != $user->getId()) {
+                        Notification::buildNew($member->getUser(), "Beckon", $beckon->getId(), "{$user->getFirstName()} {$user->getLastName()} passed on {$beckon->getTitle()}");
+                    }
+                }
+                Beckon::commitTransaction();
                 return array("status" => 1, "message" => "Beckon rejected", "payload" => "");
             }
             else{
+                Beckon::rollbackTransaction();
                 return array("status" => 0, "message" => "Beckon already rejected", "payload" => "");
             }
         }
         catch(Exception $e){
+            Beckon::rollbackTransaction();
             return array("status" => 0, "message" => $e->getMessage(), "payload" => "");
         }
     }
