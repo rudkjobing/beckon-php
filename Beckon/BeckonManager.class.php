@@ -8,7 +8,7 @@
 
 class BeckonManager {
 
-    public static function addBeckon(User $creator, $title, $description, $locationString, $begins, $ends, $groups, $latitude, $longitude, $friends){
+    public static function addBeckon(User &$creator, $title, $description, $locationString, $begins, $ends, $groups, $latitude, $longitude, $friends){
         try{
             Beckon::beginTransaction();
             $chatRoom = ChatRoom::buildNew($creator);
@@ -46,7 +46,7 @@ class BeckonManager {
         }
     }
 
-    public static function getBeckons(User $user, $id = 0){
+    public static function getBeckons(User &$user, $id = 0){
         try{
             $beckons = $user->getBeckons()->getIterator();
 
@@ -81,7 +81,7 @@ class BeckonManager {
         }
     }
 
-    public static function acceptBeckon(User $user, $beckonId){
+    public static function acceptBeckon(User &$user, $beckonId){
         try{
             Beckon::beginTransaction();
             $beckon = Beckon::build($beckonId);
@@ -126,7 +126,7 @@ class BeckonManager {
         }
     }
 
-    public static function rejectBeckon(User $user, $beckonId){
+    public static function rejectBeckon(User &$user, $beckonId){
         try{
             Beckon::beginTransaction();
             $beckon = Beckon::build($beckonId);
@@ -164,6 +164,39 @@ class BeckonManager {
                 Beckon::rollbackTransaction();
                 return array("status" => 0, "message" => "Beckon already rejected", "payload" => "");
             }
+        }
+        catch(Exception $e){
+            Beckon::rollbackTransaction();
+            return array("status" => 0, "message" => $e->getMessage(), "payload" => "");
+        }
+    }
+
+    public function deleteBeckon(User &$user, $beckonId){
+        try {
+            Beckon::beginTransaction();
+            $beckon = Beckon::build($beckonId);
+            $beckonMember = BeckonMember::buildFromUserAndBeckonId($user, $beckonId);
+
+            $memberCount = 0;
+            $newBeckonOwner = null;
+            foreach($beckon->getMembers()->getIterator() as $member) {
+                /* @var $member BeckonMember */
+                if ($member->getStatus() != "REJECTED") {
+                    $memberCount++;
+                    $newBeckonOwner = $member->getUser();
+                }
+            }
+            if($memberCount == 1){
+                $beckon->delete();
+            }
+            else{
+                if($beckon->getOwner()->getId() == $user->getId()){
+                    $beckon->setOwner($newBeckonOwner);
+                    $beckon->flush();
+                }
+                $beckonMember->delete();
+            }
+            Beckon::commitTransaction();
         }
         catch(Exception $e){
             Beckon::rollbackTransaction();

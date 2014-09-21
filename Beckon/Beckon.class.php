@@ -32,7 +32,7 @@ class Beckon extends Persistence implements JsonSerializable{
     private $rejected = -1;
 
     //Setters
-    protected function setOwner(&$owner){
+    public function setOwner(&$owner){
         if($this->owner != $owner){
             $this->owner = $owner;
             $this->dirty = true;
