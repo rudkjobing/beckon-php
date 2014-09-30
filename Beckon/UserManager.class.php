@@ -8,9 +8,24 @@
 
 class UserManager {
 
-    public static function eatCookie($cookieId, $cookie){
+    /**
+     * @param $cookieId
+     * @param $nonce
+     * @param $hashPresented
+     * @return User
+     * @throws Exception
+     */
+    public static function eatCookie($cookieId, $nonce, $hashPresented){
         try{
-            return Cookie::build($cookieId, $cookie)->getOwner();
+            $cookie =  Cookie::build($cookieId);
+            $key = $cookie->getCookie();
+            $hashCalculated = base64_encode(hash_hmac('sha256', $nonce, $key, true));
+            if($hashPresented == $hashCalculated){
+                return $cookie->getOwner();
+            }
+            else{
+                throw new Exception("Invalid hash");
+            }
         }
         catch(Exception $e){
             throw $e;

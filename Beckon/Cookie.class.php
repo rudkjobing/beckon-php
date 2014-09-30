@@ -39,6 +39,11 @@ class Cookie extends Persistence implements JsonSerializable{
         if(!is_null($this->id)){return $this->id;}
         else{$this->sync();return $this->id;}
     }
+
+    /**
+     * @return User
+     * @throws Exception
+     */
     public function getOwner(){
         if(!is_null($this->owner)){return $this->owner;}
         else{$this->sync();return $this->owner;}
@@ -83,7 +88,7 @@ class Cookie extends Persistence implements JsonSerializable{
 
     public function sync(){
         if(!is_null($this->id)){
-            $set = $this->q("select * from Cookie where id = {$this->id} and cookie = '{$this->cookie}'");
+            $set = $this->q("select * from Cookie where id = {$this->id}");
             if($set->rowCount() > 0){
                 foreach($set as $row){
                     $this->id = $row['id'];
@@ -107,14 +112,13 @@ class Cookie extends Persistence implements JsonSerializable{
     }
 
     //Factory
-    public static function build($id, $_cookie){
+    public static function build($id){
         try{
             return self::cacheGet("Cookie", $id);
         }
         catch(Exception $e){
             $cookie = new Cookie($id);
-            $cookie->setCookie($_cookie);
-            self::cachePut("Cookie", $id, $cookie);//TODO FIX THIS SHIT
+            self::cachePut("Cookie", $id, $cookie);
             return $cookie;
         }
     }

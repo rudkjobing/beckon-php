@@ -40,7 +40,11 @@ include_once "ChatMessage.class.php";
 	$client = json_decode($body);
     if(isset($client->cookie)){
         try{
-            $user = UserManager::eatCookie($client->cookie->id, $client->cookie->cookie);
+//            $hash = base64_encode(hash_hmac('sha256', $client->cookie->nonce, $client->cookie->cookie, true));
+//            $user = UserManager::eatCookie($client->cookie->id, $client->cookie->cookie);
+            $user = UserManager::eatCookie($client->cookie->id, $client->cookie->nonce, $_SERVER['HTTP_HASH']);
+//            echo json_encode(array("status" => 1, "message" => "HASH", "payload" => $hash));
+//            exit;
         }
         catch(Exception $e){
             if(!isset($_SERVER['HTTP_USER'])){
