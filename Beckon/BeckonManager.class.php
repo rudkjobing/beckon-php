@@ -210,7 +210,6 @@ class BeckonManager {
             Beckon::beginTransaction();
 
             $beckon = Beckon::build($beckonId);
-
             $users = array();
 
             foreach($members as $friend){
@@ -223,7 +222,7 @@ class BeckonManager {
                 ChatRoomMember::buildNew($beckon->getChatRoom(), $user, false);
                 Notification::buildNew($user, "Beckon", 0, $beckon->getOwner()->getFirstName() . " Invites you to " . $beckon->getTitle());
             }
-            $beckon->setInvited(count($users) + 1);
+            $beckon->setInvited($beckon->getInvited() + count($users));
             $beckon->flush();
             Beckon::commitTransaction();
             return array("status" => 1, "message" => "Members added", "payload" => "");
