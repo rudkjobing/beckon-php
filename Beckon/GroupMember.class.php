@@ -35,14 +35,28 @@ class GroupMember extends Persistence implements JsonSerializable{
     }
 
     //Lazy Getters
+    /**
+     * @return int
+     * @throws Exception
+     */
     public function getId(){
         if(!is_null($this->id)){return $this->id;}
         else{$this->sync();return $this->id;}
     }
+
+    /**
+     * @return Friend
+     * @throws Exception
+     */
     public function getFriend(){
         if(!is_null($this->friend)){return $this->friend;}
         else{$this->sync();return $this->friend;}
     }
+
+    /**
+     * @return Group
+     * @throws Exception
+     */
     public function getGroup(){
         if(!is_null($this->group)){return $this->group;}
         else{$this->sync();return $this->group;}

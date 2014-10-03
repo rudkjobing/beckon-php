@@ -63,10 +63,20 @@ class Friend extends Persistence implements JsonSerializable{
         if(!is_null($this->id)){return $this->id;}
         else{$this->sync();return $this->id;}
     }
+
+    /**
+     * @return User
+     * @throws Exception
+     */
     public function getOwner(){
         if(!is_null($this->owner)){return $this->owner;}
         else{$this->sync();return $this->owner;}
     }
+
+    /**
+     * @return User
+     * @throws Exception
+     */
     public function getUser(){
         if(!is_null($this->user)){return $this->user;}
         else{$this->sync();return $this->user;}
@@ -75,6 +85,11 @@ class Friend extends Persistence implements JsonSerializable{
         if(!is_null($this->nickName)){return $this->nickName;}
         else{$this->sync();return $this->nickName;}
     }
+
+    /**
+     * @return Friend
+     * @throws Exception
+     */
     public function getPeer(){
         if(!is_null($this->peer)){return $this->peer;}
         else{$this->sync();return $this->peer;}

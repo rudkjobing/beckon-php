@@ -116,10 +116,19 @@ class Beckon extends Persistence implements JsonSerializable{
         if(!is_null($this->locationString)){return $this->locationString;}
         else{$this->sync();return $this->locationString;}
     }
+
+    /**
+     * @return User
+     * @throws Exception
+     */
     public function getOwner(){
         if(!is_null($this->owner)){return $this->owner;}
         else{$this->sync();return $this->owner;}
     }
+
+    /**
+     * @return BeckonMemberCollection|null
+     */
     public function getMembers(){
         if(!is_null($this->members)){return $this->members;}
         else{$this->members = new BeckonMemberCollection($this->getId()); return $this->members;}
@@ -140,6 +149,11 @@ class Beckon extends Persistence implements JsonSerializable{
         if(!is_null($this->longitude)){return $this->longitude;}
         else{$this->sync();return $this->longitude;}
     }
+
+    /**
+     * @return ChatRoom
+     * @throws Exception
+     */
     public function getChatRoom(){
         if(!is_null($this->chatRoom)){return $this->chatRoom;}
         else{$this->sync();return $this->chatRoom;}

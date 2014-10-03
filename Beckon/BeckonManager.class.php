@@ -19,7 +19,7 @@ class BeckonManager {
             $users = array();
             foreach($groups as $group){
                 $members = Group::build($group)->getMembers()->getIterator();
-                foreach($members as $member){
+                foreach($members as $member){/* @var $member GroupMember */
                     array_push($users, $member->getFriend()->getPeer()->getOwner());
                 }
             }
@@ -31,7 +31,7 @@ class BeckonManager {
             foreach($users as $user){
                 BeckonMember::buildNew($beckon, $user, "PENDING");
                 ChatRoomMember::buildNew($chatRoom, $user, false);
-                Notification::buildNew($user, "Beckon", 0, $creator->getFirstName() . " Beckons you");
+                Notification::buildNew($user, "Beckon", 0, $creator->getFirstName() . " Invites you to " . $beckon->getTitle());
             }
             BeckonMember::buildNew($beckon, $creator, "ACCEPTED");
             ChatRoomMember::buildNew($chatRoom, $creator, false);
@@ -198,6 +198,35 @@ class BeckonManager {
             }
             Beckon::commitTransaction();
             return array("status" => 1, "message" => "Beckon deleted", "payload" => "");
+        }
+        catch(Exception $e){
+            Beckon::rollbackTransaction();
+            return array("status" => 0, "message" => $e->getMessage(), "payload" => "");
+        }
+    }
+
+    public static function addMembers(User &$user, $beckonId, $members){
+        try{
+            Beckon::beginTransaction();
+
+            $beckon = Beckon::build($beckonId);
+
+            $users = array();
+
+            foreach($members as $friend){
+                $friend = Friend::build($friend);
+                array_push($users, $friend->getPeer()->getOwner());
+            }
+            $users = array_unique($users);
+            foreach($users as $user){
+                BeckonMember::buildNew($beckon, $user, "PENDING");
+                ChatRoomMember::buildNew($beckon->getChatRoom(), $user, false);
+                Notification::buildNew($user, "Beckon", 0, $beckon->getOwner()->getFirstName() . " Invites you to " . $beckon->getTitle());
+            }
+            $beckon->setInvited(count($users) + 1);
+            $beckon->flush();
+            Beckon::commitTransaction();
+            return array("status" => 1, "message" => "Members added", "payload" => "");
         }
         catch(Exception $e){
             Beckon::rollbackTransaction();

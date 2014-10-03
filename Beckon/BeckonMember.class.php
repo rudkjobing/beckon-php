@@ -47,10 +47,20 @@ class BeckonMember extends Persistence implements JsonSerializable{
         if(!is_null($this->id)){return $this->id;}
         else{$this->sync();return $this->id;}
     }
+
+    /**
+     * @return User
+     * @throws Exception
+     */
     public function getUser(){
         if(!is_null($this->user)){return $this->user;}
         else{$this->sync();return $this->user;}
     }
+
+    /**
+     * @return Beckon
+     * @throws Exception
+     */
     public function getBeckon(){
         if(!is_null($this->beckon)){return $this->beckon;}
         else{$this->sync();return $this->beckon;}
