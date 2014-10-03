@@ -169,7 +169,7 @@ class User extends Persistence implements JsonSerializable{
 
     //Serialization
     public function jsonSerialize() {
-        return array("firstName" => $this->getFirstName(), "lastName" => $this->getLastName(), "emailAddress" => $this->getEmailAddress());
+        return array("id" => $this->getId(), "firstName" => $this->getFirstName(), "lastName" => $this->getLastName(), "emailAddress" => $this->getEmailAddress());
     }
 
     public function getJsonSerializedTree() {
