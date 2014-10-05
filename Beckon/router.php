@@ -40,19 +40,20 @@ include_once "ChatMessage.class.php";
 	$client = json_decode($body);
     if(isset($client->cookie)){
         try{
-//            $hash = base64_encode(hash_hmac('sha256', $client->cookie->nonce, $client->cookie->cookie, true));
-//            $user = UserManager::eatCookie($client->cookie->id, $client->cookie->cookie);
             $user = UserManager::eatCookie($client->cookie->id, $client->cookie->nonce, $_SERVER['HTTP_HASH']);
-//            echo json_encode(array("status" => 1, "message" => "HASH", "payload" => $hash));
-//            exit;
         }
         catch(Exception $e){
             if(!isset($_SERVER['HTTP_USER'])){
-                echo json_encode(array("status" => 0, "message" => "Invalid Cookie", "payload" => $client->cookie->id));
+                echo json_encode(array("status" => 403, "message" => "Bad credentials", "payload" => $client->cookie->id));
                 exit;
             }
         }
     }
+    elseif(!isset($_SERVER['HTTP_USER'])){
+        echo json_encode(array("status" => 403, "message" => "Missing credentials", "payload" => $client->cookie->id));
+        exit;
+    }
+
 	if(isset($_SERVER['HTTP_USER'])){
         if($_SERVER['HTTP_USER'] == "getState"){
             $response = UserManager::getState($user);
