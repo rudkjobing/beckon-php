@@ -27,16 +27,11 @@ include_once "ChatRoomMember.class.php";
 include_once "ChatMessage.class.php";
 
 	if(!isset($_SERVER['HTTP_APPKEY']) || $_SERVER['HTTP_APPKEY'] != "6752dad744e6ab1bd0e65dbf4f2ffc77"){
-//        foreach ($_SERVER as $key => $value) {
-//            echo $key . " -> " . $value . "\n", 3, "/var/www/html/errors.log";
-//        }
         header("HTTP/1.0 404 Not Found");
         exit;
     }
 	$response = array("status" => 0, "message" => "fatal error", "payload" => "");
 	$body = file_get_contents('php://input');
-//    error_log(date("Y-m-d H:i:s"). "\n" . json_encode($_SERVER), 3, "/var/www/html/errors.log");
-//	error_log(date("Y-m-d H:i:s"). "\n" . $body, 3, "/var/www/html/errors.log");
 	$client = json_decode($body);
     if(isset($client->cookie)){
         try{
@@ -44,21 +39,18 @@ include_once "ChatMessage.class.php";
         }
         catch(Exception $e){
             if(!isset($_SERVER['HTTP_USER'])){
-                echo json_encode(array("status" => 403, "message" => "Bad credentials", "payload" => $client->cookie->id));
+                echo json_encode(array("status" => 403, "message" => "Bad credentials", "payload" => ""));
                 exit;
             }
         }
     }
     elseif(!isset($_SERVER['HTTP_USER'])){
-        echo json_encode(array("status" => 403, "message" => "Missing credentials", "payload" => $client->cookie->id));
+        echo json_encode(array("status" => 403, "message" => "Missing credentials", "payload" => ""));
         exit;
     }
 
 	if(isset($_SERVER['HTTP_USER'])){
-        if($_SERVER['HTTP_USER'] == "getState"){
-            $response = UserManager::getState($user);
-        }
-        elseif($_SERVER['HTTP_USER'] == "signUp"){
+        if($_SERVER['HTTP_USER'] == "signUp"){
             $response = UserManager::signUp($client->firstName, $client->lastName, $client->email, $client->password);
         }
         elseif($_SERVER['HTTP_USER'] == "signIn"){
@@ -66,11 +58,6 @@ include_once "ChatMessage.class.php";
         }
         elseif($_SERVER['HTTP_USER'] == "signOut"){
             $response = UserManager::signOut($client->cookie->id, $client->cookie->cookie);
-        }
-    }
-    elseif(isset($_SERVER['HTTP_NOTIFICATION'])){
-        if($_SERVER['HTTP_NOTIFICATION'] == "getNotification"){
-            $response = NotificationManager::getNotification($user, $client->notificationId);
         }
     }
     elseif(isset($_SERVER['HTTP_CHATROOM'])){

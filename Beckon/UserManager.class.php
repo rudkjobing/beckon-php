@@ -54,15 +54,6 @@ class UserManager {
         }
     }
 
-//    public static function getState($user){
-//        try{
-//            return array("status" => 1, "message" => "State", "payload" => array("user" => $user->getJsonSerializedTree()));
-//        }
-//        catch(Exception $e){
-//            return array("status" => 0, "message" => $e->getMessage(), "payload" => "");
-//        }
-//    }
-
     public static function signOut($cookieId, $cookie){
         try{
             $c = Cookie::build($cookieId, $cookie);

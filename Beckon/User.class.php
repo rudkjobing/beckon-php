@@ -203,6 +203,12 @@ class User extends Persistence implements JsonSerializable{
         return $user;
     }
 
+    /**
+     * @return User
+     * @param $email
+     * @param $password
+     * @throws Exception
+     */
     public static function buildFromEmailAndPassword($email, $password){
 
         $stmt = self::getConnection()->prepare("select * from User where emailAddress = :email");
