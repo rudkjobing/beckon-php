@@ -33,6 +33,10 @@ class NotificationService{
         self::$query->execute();
         $notifications =self::$query->fetchAll();
 
+        if(self::$query->rowCount() == 0){
+            return;
+        }
+
         $ctx = stream_context_create();
         stream_context_set_option($ctx, 'ssl', 'local_cert', 'productionPushBeckon.pem');
         stream_context_set_option($ctx, 'ssl', 'passphrase', self::$passphrase);
