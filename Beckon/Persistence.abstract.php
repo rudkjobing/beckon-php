@@ -8,10 +8,9 @@
 
 abstract class Persistence{
 
-//    private static $SERVER_IP = "178.62.173.25";
-    private static $SERVER_IP = "10.129.164.44";
-    private static $USERNAME = "app";
-    private static $PASSWORD = "AA2D43901A3D9F8C5730518DF92F6F0D";
+    private static $SERVER_IP = "";
+    private static $USERNAME = "";
+    private static $PASSWORD = "";
     private static $DATABASE = "Beckon";
     protected static $connection = 0;
     private static $useCount = 0;
